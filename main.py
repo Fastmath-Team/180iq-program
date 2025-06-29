@@ -1,13 +1,14 @@
-import tkinter as tk
-from tkinter import ttk
+import ttkbootstrap as ttk
+import ttkbootstrap.constants as tc
 
 
-class App(tk.Tk):
+class App(ttk.Window):
     def __init__(self):
-        super().__init__()
+        super().__init__(themename="yeti")
 
-        self.title("คิดเลขเร็วคณิตศาสตร์วิชาการ")
+        self.title("คิดเลขเร็วคณิตศาสตร์วิชาการ — NSRU x Fastmath")
         self.geometry("800x600")
+        self.minsize(800, 600)
 
         self._create_widgets()
 
@@ -16,7 +17,7 @@ class App(tk.Tk):
             self,
             text="คิดเลขเร็วคณิตศาสตร์วิชาการ",
             font=("Arial", 24, "bold"),
-            justify=tk.CENTER,
+            justify=tc.CENTER,
         ).pack(expand=True)
 
 
