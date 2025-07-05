@@ -3,7 +3,7 @@ import ttkbootstrap as ttk
 
 class Countdown(ttk.Frame):
     def __init__(self, master, defaulttime=30, **kwargs):
-        super().__init__(master, **kwargs)
+        super().__init__(master, bootstyle="light", **kwargs)
 
         self.max_seconds = defaulttime
         self.remaining_seconds = defaulttime
@@ -13,10 +13,17 @@ class Countdown(ttk.Frame):
         self._create_widgets()
 
     def _create_widgets(self):
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
         self.time_label = time_label = ttk.Label(
-            self, font=("Arial", 24, "bold"), text=self.remaining_seconds
+            self,
+            font=("Arial", 96, "bold"),
+            text=self.remaining_seconds,
+            anchor="center",
+            bootstyle="inverse-light",
         )
-        time_label.grid(row=0, column=0)
+        time_label.grid(row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew")
 
         self.time_progress_bar = time_progress_bar = ttk.Progressbar(
             self,
@@ -24,12 +31,14 @@ class Countdown(ttk.Frame):
             maximum=self.max_seconds,
             value=self.remaining_seconds,
         )
-        time_progress_bar.grid(row=0, column=1, sticky=ttk.NSEW)
+        time_progress_bar.grid(
+            row=0, column=1, rowspan=2, padx=10, pady=10, sticky=ttk.NSEW
+        )
 
         self.button = button = ttk.Button(
-            self, text="จับเวลา", command=self._toggle_timer
+            self, text="จับเวลา", bootstyle="outline", command=self._toggle_timer
         )
-        button.grid(row=1, column=0, columnspan=2, sticky=ttk.NSEW, pady=10)
+        button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky=ttk.NSEW)
 
     def _update_widgets(self):
         self.time_label["text"] = self.remaining_seconds
