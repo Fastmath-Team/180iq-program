@@ -3,7 +3,7 @@ import ttkbootstrap as ttk
 
 class Countdown(ttk.Frame):
     def __init__(self, master, defaulttime=30, **kwargs):
-        super().__init__(master, bootstyle="light", **kwargs)
+        super().__init__(master, style="light.TFrame", **kwargs)
 
         self.max_seconds = defaulttime
         self.remaining_seconds = defaulttime
@@ -21,7 +21,7 @@ class Countdown(ttk.Frame):
             font=("Arial", 96, "bold"),
             text=self.remaining_seconds,
             anchor="center",
-            bootstyle="inverse-light",
+            style="light.Inverse.TLabel",
         )
         time_label.grid(row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew")
 
@@ -36,7 +36,10 @@ class Countdown(ttk.Frame):
         )
 
         self.button = button = ttk.Button(
-            self, text="จับเวลา", bootstyle="outline", command=self._toggle_timer
+            self,
+            text="จับเวลา",
+            style="Medium.Outline.TButton",
+            command=self._toggle_timer,
         )
         button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky=ttk.NSEW)
 

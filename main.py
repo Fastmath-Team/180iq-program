@@ -1,12 +1,16 @@
 import ttkbootstrap as ttk
-import ttkbootstrap.constants as tc
-import ttkbootstrap.validation as tv
 
 from components.Countdown import Countdown
-from utils.validation import validate_positive_number
+from data import AppData
+from interface import AppInterface
+from windows.Option import OptionWindow
+
+# from utils.validation import validate_positive_number
+# import ttkbootstrap.constants as tc
+# import ttkbootstrap.validation as tv
 
 
-class App(ttk.Window):
+class App(ttk.Window, AppInterface):
     def __init__(self):
         super().__init__(themename="yeti")
 
@@ -15,10 +19,15 @@ class App(ttk.Window):
         self.minsize(800, 600)
         self.place_window_center()
 
+        self.data = AppData(self)
+
         self._create_widgets()
+        # self.open_option_window()
 
     def _create_widgets(self):
-        self.style.configure("TButton", font=(None, 16))
+        self.style.configure("Large.warning.TButton", font=(None, 24))
+        self.style.configure("Large.success.TButton", font=(None, 24))
+        self.style.configure("Medium.Outline.TButton", font=(None, 16))
 
         self.columnconfigure(0, weight=2)
         self.columnconfigure(1, weight=1)
@@ -39,18 +48,18 @@ class App(ttk.Window):
 
         ttk.Label(
             event_title_area,
-            text="คณิตศาสตร์วิชาการ",
+            textvariable=self.data.festname,
             font=("Arial", 16),
             anchor="e",
         ).pack(side="right", fill="both", expand=True)
 
-        problem_frame = ttk.Frame(left_frame, padding=10, bootstyle="light")
+        problem_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
 
         problem_frame.rowconfigure(0, weight=1)
         problem_frame.columnconfigure(0, weight=1)
 
-        problem_center_frame = ttk.Frame(problem_frame, bootstyle="light")
+        problem_center_frame = ttk.Frame(problem_frame, style="light.TFrame")
         problem_center_frame.grid(row=0, column=0)
 
         for i in range(5):
@@ -59,16 +68,16 @@ class App(ttk.Window):
                 text="0",
                 font=("Arial", 96, "bold"),
                 anchor="center",
-                bootstyle="inverse-light",
+                style="light.Inverse.TLabel",
             ).grid(row=0, padx=5, column=i)
 
-        answer_frame = ttk.Frame(left_frame, padding=10, bootstyle="light")
+        answer_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
 
         answer_frame.rowconfigure(0, weight=1)
         answer_frame.columnconfigure(0, weight=1)
 
-        answer_center_frame = ttk.Frame(answer_frame, bootstyle="light")
+        answer_center_frame = ttk.Frame(answer_frame, style="light.TFrame")
         answer_center_frame.grid(row=0, column=0)
 
         for i in range(3):
@@ -77,7 +86,7 @@ class App(ttk.Window):
                 text="0",
                 font=("Arial", 96, "bold"),
                 anchor="center",
-                bootstyle="inverse-light",
+                style="light.Inverse.TLabel",
             ).grid(row=0, padx=5, column=i)
 
         # --- RIGHT SIDE ---
@@ -85,7 +94,7 @@ class App(ttk.Window):
             fill="x", pady=(10, 0), padx=10
         )
 
-        round_frame = ttk.Frame(right_frame, padding=10, bootstyle="light")
+        round_frame = ttk.Frame(right_frame, padding=10, style="light.TFrame")
         round_frame.pack(fill="x", padx=10, pady=10)
 
         ttk.Label(
@@ -93,47 +102,44 @@ class App(ttk.Window):
             text="รอบที่ 1 ข้อที่ 1",
             font=("Arial", 16),
             anchor="center",
-            bootstyle="inverse-light",
+            style="light.Inverse.TLabel",
         ).pack(fill="x")
 
         cnt = Countdown(right_frame, 30)
         cnt.pack(fill="both", padx=10, expand=True)
 
-        action_frame = ttk.Frame(right_frame, padding=10, bootstyle="light")
+        action_frame = ttk.Frame(right_frame, padding=10, style="light.TFrame")
         action_frame.pack(fill="x", padx=10, pady=10)
 
-        self.style.configure("Large.warning.TButton", font=(None, 24))
-        self.style.configure("Large.success.TButton", font=(None, 24))
-
         get_question_btn = ttk.Button(
-            action_frame, text="สุ่มโจทย์", padding=10, bootstyle="warning"
+            action_frame, text="สุ่มโจทย์", padding=10, style="Large.warning.TButton"
         )
-        get_question_btn.configure(style="Large.warning.TButton")
         get_question_btn.pack(fill="x")
 
         get_answer_btn = ttk.Button(
-            action_frame, text="สุ่มคำตอบ", padding=10, bootstyle="success"
+            action_frame, text="สุ่มคำตอบ", padding=10, style="Large.success.TButton"
         )
-        get_answer_btn.configure(style="Large.success.TButton")
         get_answer_btn.pack(fill="x", pady=10)
 
-        action_ext_frame = ttk.Frame(action_frame, bootstyle="light")
+        action_ext_frame = ttk.Frame(action_frame, style="light.TFrame")
         action_ext_frame.pack(fill="x")
 
         action_ext_frame.columnconfigure(1, weight=1)
 
-        self.style.configure("Small.Outline.TButton", font=(None, 12))
-
-        prev_btn = ttk.Button(action_ext_frame, text="⬅︎", bootstyle="outline")
-        prev_btn.configure(style="Small.Outline.TButton")
+        prev_btn = ttk.Button(action_ext_frame, text="⬅︎", style="Small.Outline.TButton")
         prev_btn.grid(row=0, column=0, sticky="w")
 
-        next_btn = ttk.Button(action_ext_frame, text="ข้อถัดไป", bootstyle="outline")
-        next_btn.configure(style="Small.Outline.TButton")
+        next_btn = ttk.Button(
+            action_ext_frame, text="ข้อถัดไป", style="Small.Outline.TButton"
+        )
         next_btn.grid(row=0, column=1, sticky="ew", padx=10)
 
-        config_btn = ttk.Button(action_ext_frame, text="⚙️", bootstyle="outline")
-        config_btn.configure(style="Small.Outline.TButton")
+        config_btn = ttk.Button(
+            action_ext_frame,
+            text="⚙️",
+            style="Small.Outline.TButton",
+            command=self.open_option_window,
+        )
         config_btn.grid(row=0, column=2, sticky="e")
 
         # countdown_seconds = ttk.StringVar(value="30")
@@ -150,6 +156,13 @@ class App(ttk.Window):
         #             pass
 
         # countdown_seconds.trace_add("write", handle_spin)
+
+    def open_option_window(self):
+        window = OptionWindow(self)
+        window.grab_set()
+
+    def getData(self):
+        return self.data
 
 
 if __name__ == "__main__":
