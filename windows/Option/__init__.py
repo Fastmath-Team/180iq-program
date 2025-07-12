@@ -40,7 +40,7 @@ class OptionWindow(ttk.Toplevel):
         self.round_page.grid(row=0, column=0, sticky="nsew")
         self.logo_page = LogoPage(right_frame, app=self.data)
         self.logo_page.grid(row=0, column=0, sticky="nsew")
-        self.history_page = HistoryPage(right_frame)
+        self.history_page = HistoryPage(right_frame, app=self.data)
         self.history_page.grid(row=0, column=0, sticky="nsew")
 
         self.round_page.tkraise()
