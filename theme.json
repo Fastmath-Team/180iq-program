@@ -1,0 +1,27 @@
+{
+  "themes": [
+    {
+      "nsru": {
+        "type": "dark",
+        "colors": {
+          "primary": "#f8d650",
+          "secondary": "#FDF0CE",
+          "success": "#63d87b",
+          "info": "#f8d650",
+          "warning": "#e9983f",
+          "danger": "#d9534f",
+          "light": "#ebf1fc",
+          "dark": "#163557",
+          "bg": "#163557",
+          "fg": "#cddcf9",
+          "selectbg": "#f8d650",
+          "selectfg": "#3f350e",
+          "border": "#bfbfbf",
+          "inputfg": "#363636",
+          "inputbg": "#f1f1f1",
+          "active": "#f00"
+        }
+      }
+    }
+  ]
+}

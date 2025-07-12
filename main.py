@@ -12,7 +12,10 @@ from windows.Option import OptionWindow
 
 class App(ttk.Window, AppInterface):
     def __init__(self):
-        super().__init__(themename="yeti")
+        super().__init__()
+
+        self.style.load_user_themes("./theme.json")
+        self.style.theme_use("nsru")
 
         self.title("คิดเลขเร็วคณิตศาสตร์วิชาการ — NSRU x Fastmath")
         self.geometry("800x600")
@@ -27,7 +30,9 @@ class App(ttk.Window, AppInterface):
     def _create_widgets(self):
         self.style.configure("Large.warning.TButton", font=(None, 24))
         self.style.configure("Large.success.TButton", font=(None, 24))
-        self.style.configure("Medium.Outline.TButton", font=(None, 16))
+        self.style.configure("Medium.TButton", font=(None, 16))
+        self.style.configure("bglight.TButton", background="#ebf1fc")
+        self.style.configure("display.light.Inverse.TLabel", background="#f9ffff")
 
         self.columnconfigure(0, weight=2)
         self.columnconfigure(1, weight=1)
@@ -68,7 +73,8 @@ class App(ttk.Window, AppInterface):
                 text="0",
                 font=("Arial", 96, "bold"),
                 anchor="center",
-                style="light.Inverse.TLabel",
+                style="display.light.Inverse.TLabel",
+                padding=(10, -10, 10, -10),
             ).grid(row=0, padx=5, column=i)
 
         answer_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
@@ -86,7 +92,8 @@ class App(ttk.Window, AppInterface):
                 text="0",
                 font=("Arial", 96, "bold"),
                 anchor="center",
-                style="light.Inverse.TLabel",
+                style="display.light.Inverse.TLabel",
+                padding=(10, -10, 10, -10),
             ).grid(row=0, padx=5, column=i)
 
         # --- RIGHT SIDE ---
@@ -126,18 +133,16 @@ class App(ttk.Window, AppInterface):
 
         action_ext_frame.columnconfigure(1, weight=1)
 
-        prev_btn = ttk.Button(action_ext_frame, text="⬅︎", style="Small.Outline.TButton")
+        prev_btn = ttk.Button(action_ext_frame, text="⬅︎", style="bglight.TButton")
         prev_btn.grid(row=0, column=0, sticky="w")
 
-        next_btn = ttk.Button(
-            action_ext_frame, text="ข้อถัดไป", style="Small.Outline.TButton"
-        )
+        next_btn = ttk.Button(action_ext_frame, text="ข้อถัดไป", style="bglight.TButton")
         next_btn.grid(row=0, column=1, sticky="ew", padx=10)
 
         config_btn = ttk.Button(
             action_ext_frame,
             text="⚙️",
-            style="Small.Outline.TButton",
+            style="bglight.TButton",
             command=self.open_option_window,
         )
         config_btn.grid(row=0, column=2, sticky="e")

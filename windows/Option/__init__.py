@@ -66,7 +66,7 @@ class OptionWindow(ttk.Toplevel):
         self.logo_page_btn = ttk.Button(
             left_frame,
             text="ข้อมูลงานแข่งขัน",
-            style="Outline.TButton",
+            style="secondary.TButton",
             command=lambda: self.show_page("logo"),
         )
         self.logo_page_btn.pack(fill="x", pady=10)
@@ -74,7 +74,7 @@ class OptionWindow(ttk.Toplevel):
         self.history_page_btn = ttk.Button(
             left_frame,
             text="ประวัติโจทย์",
-            style="Outline.TButton",
+            style="secondary.TButton",
             command=lambda: self.show_page("history"),
         )
         self.history_page_btn.pack(fill="x")
@@ -85,9 +85,9 @@ class OptionWindow(ttk.Toplevel):
         a.pack(fill="x", expand=True, anchor="s")
 
     def show_page(self, page: Literal["round", "logo", "history"]):
-        self.round_page_btn.configure(style="Outline.TButton")
-        self.logo_page_btn.configure(style="Outline.TButton")
-        self.history_page_btn.configure(style="Outline.TButton")
+        self.round_page_btn.configure(style="secondary.TButton")
+        self.logo_page_btn.configure(style="secondary.TButton")
+        self.history_page_btn.configure(style="secondary.TButton")
 
         if page == "round":
             self.round_page.tkraise()

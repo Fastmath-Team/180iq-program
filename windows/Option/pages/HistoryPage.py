@@ -23,7 +23,7 @@ class HistoryPage(ttk.Frame):
         ttk.Button(
             top_frame,
             text="คัดลอก",
-            style="Small.Outline.TButton",
+            style="TButton",
             command=self._copy_text,
         ).pack(side="right", fill="both")
 

@@ -38,7 +38,7 @@ class Countdown(ttk.Frame):
         self.button = button = ttk.Button(
             self,
             text="จับเวลา",
-            style="Medium.Outline.TButton",
+            style="Medium.TButton",
             command=self._toggle_timer,
         )
         button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky=ttk.NSEW)
