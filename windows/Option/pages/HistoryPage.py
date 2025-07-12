@@ -28,6 +28,9 @@ class HistoryPage(ttk.Frame):
         ).pack(side="right", fill="both")
 
         self.history_textbox = ttk.Text(self, state="disabled", wrap="word")
+        self.history_textbox.configure(
+            bg="#f9ffff", highlightbackground="#163557", highlightcolor="#163557"
+        )
         self.history_textbox.pack(fill="both", expand=True)
 
         def update_history(*args):

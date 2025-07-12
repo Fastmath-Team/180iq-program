@@ -33,6 +33,9 @@ class App(ttk.Window, AppInterface):
         self.style.configure("Medium.TButton", font=(None, 16))
         self.style.configure("bglight.TButton", background="#ebf1fc")
         self.style.configure("display.light.Inverse.TLabel", background="#f9ffff")
+        self.style.configure(
+            "dark.TEntry", background="#ebf1fc", fieldbackground="#f9ffff"
+        )
 
         self.columnconfigure(0, weight=2)
         self.columnconfigure(1, weight=1)

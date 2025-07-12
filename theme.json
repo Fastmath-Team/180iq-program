@@ -16,10 +16,10 @@
           "fg": "#cddcf9",
           "selectbg": "#f8d650",
           "selectfg": "#3f350e",
-          "border": "#bfbfbf",
+          "border": "#f8d650",
           "inputfg": "#363636",
           "inputbg": "#f1f1f1",
-          "active": "#f00"
+          "active": "#f8d650"
         }
       }
     }

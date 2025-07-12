@@ -13,4 +13,4 @@ class LogoPage(ttk.Frame):
             style="light.Inverse.TLabel",
         ).pack(fill="x", pady=(0, 5))
 
-        ttk.Entry(self, textvariable=app.festname).pack(fill="x")
+        ttk.Entry(self, textvariable=app.festname, style="dark.TEntry").pack(fill="x")
