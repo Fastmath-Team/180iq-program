@@ -16,4 +16,7 @@ class CustomizedScrolledFrame(ScrolledFrame):
             delta = -10
         elif event.num == 5:
             delta = 10
+        else:
+            raise ValueError("Unknown mousewheel event")
+
         self.yview_scroll(delta, tc.UNITS)
