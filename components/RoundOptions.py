@@ -131,4 +131,4 @@ class RoundOptions(ttk.Frame):
 
     def setRound(self, round: int):
         self.round.set(round)
-        self.round_label.configure(text=f"รอบ {round}")
+        self.round_label["text"] = f"รอบ {round}"

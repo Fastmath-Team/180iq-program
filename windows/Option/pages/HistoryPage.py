@@ -45,10 +45,10 @@ class HistoryPage(ttk.Frame):
         self.set_text(app.history.get())
 
     def set_text(self, text: str):
-        self.history_textbox.configure(state="normal")
-        self.history_textbox.delete("1.0", "end")
+        self.history_textbox["state"] ="normal"
+        self.history_textbox.delete(1.0, "end")
         self.history_textbox.insert("end", text)
-        self.history_textbox.configure(state="disabled")
+        self.history_textbox["state"] ="disabled"
 
     def _copy_text(self):
         self.clipboard_clear()

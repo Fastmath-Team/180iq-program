@@ -91,11 +91,11 @@ class OptionWindow(ttk.Toplevel):
             frame_btn, frame = self._pages[self._current_page]
 
             frame.pack_forget()
-            frame_btn.configure(style="secondary.TButton")
+            frame_btn["style"] ="secondary.TButton"
 
         frame_btn, frame = self._pages[page]
 
         frame.pack(fill="both", expand=True)
-        frame_btn.configure(style="TButton")
+        frame_btn["style"] ="TButton"
 
         self._current_page = page
