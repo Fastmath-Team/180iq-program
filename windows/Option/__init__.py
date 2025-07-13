@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal, Optional
 
 import ttkbootstrap as ttk
 
@@ -33,17 +33,9 @@ class OptionWindow(ttk.Toplevel):
         right_frame = ttk.Frame(self, style="light.TFrame")
         right_frame.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="nsew")
 
-        right_frame.columnconfigure(0, weight=1)
-        right_frame.rowconfigure(0, weight=1)
-
-        self.round_page = RoundPage(right_frame)
-        self.round_page.grid(row=0, column=0, sticky="nsew")
-        self.logo_page = LogoPage(right_frame, app=self.data)
-        self.logo_page.grid(row=0, column=0, sticky="nsew")
-        self.history_page = HistoryPage(right_frame, app=self.data)
-        self.history_page.grid(row=0, column=0, sticky="nsew")
-
-        self.round_page.tkraise()
+        round_page = RoundPage(right_frame)
+        logo_page = LogoPage(right_frame, app=self.data)
+        history_page = HistoryPage(right_frame, app=self.data)
 
         ttk.Label(
             left_frame,
@@ -56,45 +48,54 @@ class OptionWindow(ttk.Toplevel):
 
         ttk.Separator(left_frame).pack(fill="x", pady=10)
 
-        self.round_page_btn = ttk.Button(
+        round_page_btn = ttk.Button(
             left_frame,
             text="รอบและโจทย์",
-            command=lambda: self.show_page("round"),
+            style="secondary.TButton",
+            command=lambda: self._show_page("round"),
         )
-        self.round_page_btn.pack(fill="x")
+        round_page_btn.pack(fill="x")
 
-        self.logo_page_btn = ttk.Button(
+        logo_page_btn = ttk.Button(
             left_frame,
             text="ข้อมูลงานแข่งขัน",
             style="secondary.TButton",
-            command=lambda: self.show_page("logo"),
+            command=lambda: self._show_page("logo"),
         )
-        self.logo_page_btn.pack(fill="x", pady=10)
+        logo_page_btn.pack(fill="x", pady=10)
 
-        self.history_page_btn = ttk.Button(
+        history_page_btn = ttk.Button(
             left_frame,
             text="ประวัติโจทย์",
             style="secondary.TButton",
-            command=lambda: self.show_page("history"),
+            command=lambda: self._show_page("history"),
         )
-        self.history_page_btn.pack(fill="x")
+        history_page_btn.pack(fill="x")
 
-        a = ttk.Button(
+        ttk.Button(
             left_frame, text="ปิด", style="Link.TButton", command=self.destroy
-        )
-        a.pack(fill="x", expand=True, anchor="s")
+        ).pack(fill="x", expand=True, anchor="s")
 
-    def show_page(self, page: Literal["round", "logo", "history"]):
-        self.round_page_btn.configure(style="secondary.TButton")
-        self.logo_page_btn.configure(style="secondary.TButton")
-        self.history_page_btn.configure(style="secondary.TButton")
+        self._current_page: Optional[str] = None
+        self._pages: dict[str, tuple[ttk.Button, ttk.Frame]] = {
+            "round": (round_page_btn, round_page),
+            "logo": (logo_page_btn, logo_page),
+            "history": (history_page_btn, history_page),
+        }
 
-        if page == "round":
-            self.round_page.tkraise()
-            self.round_page_btn.configure(style="TButton")
-        elif page == "logo":
-            self.logo_page.tkraise()
-            self.logo_page_btn.configure(style="TButton")
-        elif page == "history":
-            self.history_page.tkraise()
-            self.history_page_btn.configure(style="TButton")
+        self._show_page("round")
+
+
+    def _show_page(self, page: str):
+        if self._current_page:
+            frame_btn, frame = self._pages[self._current_page]
+
+            frame.pack_forget()
+            frame_btn.configure(style="secondary.TButton")
+
+        frame_btn, frame = self._pages[page]
+
+        frame.pack(fill="both", expand=True)
+        frame_btn.configure(style="TButton")
+
+        self._current_page = page
