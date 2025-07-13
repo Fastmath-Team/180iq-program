@@ -35,7 +35,6 @@ class HistoryPage(ttk.Frame):
 
         def update_history(*args):
             if str := app.history.get():
-                print("str", str)
                 try:
                     self.set_text(str)
                 except ValueError:
