@@ -15,7 +15,7 @@ class OptionWindow(ttk.Toplevel):
     def __init__(self, parent: AppInterface):
         super().__init__(master=parent)
 
-        self.data = parent.getData()
+        self.app = parent
 
         self.title("ตั้งค่าการแข่งขัน — NSRU x Fastmath")
         self.geometry("640x480")
@@ -34,8 +34,8 @@ class OptionWindow(ttk.Toplevel):
         right_frame.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="nsew")
 
         round_page = RoundPage(right_frame)
-        logo_page = LogoPage(right_frame, app=self.data)
-        history_page = HistoryPage(right_frame, app=self.data)
+        logo_page = LogoPage(right_frame, app=self.app)
+        history_page = HistoryPage(right_frame, app=self.app)
 
         ttk.Label(
             left_frame,

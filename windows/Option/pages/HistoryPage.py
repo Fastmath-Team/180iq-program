@@ -2,11 +2,11 @@ from tkinter import messagebox
 
 import ttkbootstrap as ttk
 
-from data import AppData
+from interface import AppInterface
 
 
 class HistoryPage(ttk.Frame):
-    def __init__(self, master, app: AppData, **kwargs):
+    def __init__(self, master, app: AppInterface, **kwargs):
         super().__init__(master, padding=10, style="light.TFrame", **kwargs)
 
         self.app = app

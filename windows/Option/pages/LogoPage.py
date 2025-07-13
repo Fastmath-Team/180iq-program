@@ -1,10 +1,10 @@
 import ttkbootstrap as ttk
 
-from data import AppData
+from interface import AppInterface
 
 
 class LogoPage(ttk.Frame):
-    def __init__(self, master, app: AppData, **kwargs):
+    def __init__(self, master, app: AppInterface, **kwargs):
         super().__init__(master, padding=10, style="light.TFrame", **kwargs)
 
         ttk.Label(

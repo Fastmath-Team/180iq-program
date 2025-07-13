@@ -1,6 +1,10 @@
-from data import AppData
-
+import ttkbootstrap as ttk
 
 class AppInterface:
-    def getData(self) -> AppData:
+    @property
+    def festname(self) -> ttk.StringVar:
+        raise NotImplementedError()
+
+    @property
+    def history(self) -> ttk.StringVar:
         raise NotImplementedError()

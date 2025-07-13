@@ -1,7 +1,6 @@
 import ttkbootstrap as ttk
 
 from components.Countdown import Countdown
-from data import AppData
 from interface import AppInterface
 from windows.Option import OptionWindow
 
@@ -22,7 +21,8 @@ class App(ttk.Window, AppInterface):
         self.minsize(800, 600)
         self.place_window_center()
 
-        self.data = AppData(self)
+        self._event_name = ttk.StringVar(self, 'คณิตศาสตร์วิชาการ')
+        self._histories = ttk.StringVar(self, 'ประวัติโจทย์\n')
 
         self._create_widgets()
         # self.open_option_window()
@@ -55,12 +55,13 @@ class App(ttk.Window, AppInterface):
             side="left", fill="both", expand=True
         )
 
-        ttk.Label(
+        self._event_name_label = ttk.Label(
             event_title_area,
-            textvariable=self.data.festname,
+            textvariable=self._event_name,
             font=("Arial", 16),
             anchor="e",
-        ).pack(side="right", fill="both", expand=True)
+        )
+        self._event_name_label.pack(side="right", fill="both", expand=True)
 
         problem_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
@@ -164,9 +165,13 @@ class App(ttk.Window, AppInterface):
         window = OptionWindow(self)
         window.grab_set()
 
-    def getData(self):
-        return self.data
+    @property
+    def festname(self) -> ttk.StringVar:
+        return self._event_name
 
+    @property
+    def history(self) -> ttk.StringVar:
+        return self._histories
 
 if __name__ == "__main__":
     app = App()
