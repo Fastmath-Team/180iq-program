@@ -65,11 +65,8 @@ class App(ttk.Window, AppInterface):
         problem_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
 
-        problem_frame.rowconfigure(0, weight=1)
-        problem_frame.columnconfigure(0, weight=1)
-
         problem_center_frame = ttk.Frame(problem_frame, style="light.TFrame")
-        problem_center_frame.grid(row=0, column=0)
+        problem_center_frame.pack(expand=True)
 
         for i in range(5):
             ttk.Label(
@@ -84,11 +81,8 @@ class App(ttk.Window, AppInterface):
         answer_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
 
-        answer_frame.rowconfigure(0, weight=1)
-        answer_frame.columnconfigure(0, weight=1)
-
         answer_center_frame = ttk.Frame(answer_frame, style="light.TFrame")
-        answer_center_frame.grid(row=0, column=0)
+        answer_center_frame.pack(expand=True)
 
         for i in range(3):
             ttk.Label(
