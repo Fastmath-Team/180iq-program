@@ -27,10 +27,10 @@ class RoundPage(ttk.Frame):
         content_frame.pack(fill="both", expand=True, pady=(10, 0))
 
         self.rounds = [
-            RoundOptions(content_frame, onremove=self.remove_round),
-            RoundOptions(content_frame, onremove=self.remove_round),
-            RoundOptions(content_frame, onremove=self.remove_round),
-            RoundOptions(content_frame, onremove=self.remove_round),
+            RoundOptions(content_frame, on_remove=self.remove_round),
+            RoundOptions(content_frame, on_remove=self.remove_round),
+            RoundOptions(content_frame, on_remove=self.remove_round),
+            RoundOptions(content_frame, on_remove=self.remove_round),
         ]
 
         for round in self.rounds:
@@ -40,15 +40,15 @@ class RoundPage(ttk.Frame):
 
     def _renumber_rounds(self):
         for idx, round in enumerate(self.rounds):
-            round.setRound(idx + 1)
+            round.round.set(idx + 1)
 
     def add_round(self):
-        round = RoundOptions(self.content_frame, onremove=self.remove_round)
+        round = RoundOptions(self.content_frame, on_remove=self.remove_round)
         round.pack(fill="x")
         self.rounds.append(round)
         self._renumber_rounds()
 
-    def remove_round(self, index: int):
-        self.rounds[index].destroy()
-        self.rounds.pop(index)
+    def remove_round(self, item: RoundOptions):
+        item.destroy()
+        self.rounds.remove(item)
         self._renumber_rounds()

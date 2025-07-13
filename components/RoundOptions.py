@@ -1,8 +1,9 @@
+from typing import Callable, Self
 import ttkbootstrap as ttk
 
 
 class RoundOptions(ttk.Frame):
-    def __init__(self, master, onremove, **kwargs):
+    def __init__(self, master, on_remove: Callable[[Self], None], **kwargs):
         super().__init__(master, padding=1, **kwargs)
 
         self.round = ttk.IntVar(value=1)
@@ -27,11 +28,16 @@ class RoundOptions(ttk.Frame):
         )
         self.round_label.pack(side="left", fill="both", expand=True)
 
+        def update_round_label(*args):
+            self.round_label["text"] = f"รอบที่ {self.round.get()}"
+
+        self.round.trace_add("write", update_round_label)
+
         ttk.Button(
             title_frame,
             text="ลบรอบ",
             style="TButton",
-            command=lambda: onremove(self.round.get() - 1),
+            command=lambda: on_remove(self),
         ).pack(side="right", fill="both")
 
         options_grid = ttk.Frame(master_frame)
@@ -128,7 +134,3 @@ class RoundOptions(ttk.Frame):
                 variable=self.hightlighted_digits[i],
             )
             check.grid(row=0, column=i)
-
-    def setRound(self, round: int):
-        self.round.set(round)
-        self.round_label["text"] = f"รอบ {round}"
