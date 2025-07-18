@@ -1,17 +1,31 @@
-from typing import Any, Literal, Optional
+from typing import Optional
 
-import ttkbootstrap as ttk
+import customtkinter as ctk
 
 from interface import AppInterface
 from windows.Option.pages.HistoryPage import HistoryPage
 from windows.Option.pages.LogoPage import LogoPage
 from windows.Option.pages.RoundPage import RoundPage
 
-# import ttkbootstrap.constants as tc
-# import ttkbootstrap.validation as tv
+# FIXME - import from theme
+BUTTON_DEFAULT_STYLES = {
+    "fg_color": ("#3a7ebf", "#1f538d"),
+    "hover_color": ("#325882", "#14375e"),
+    "border_color": ("#3E454A", "#949A9F"),
+    "border_width": 0,
+    "text_color": ("#DCE4EE", "#DCE4EE"),
+}
+
+BUTTON_OUTLINE_STYLES = {
+    "fg_color": "transparent",
+    "hover_color": ("gray80", "gray28"),
+    "border_color": ("#3a7ebf", "#1f538d"),
+    "border_width": 2,
+    "text_color": ("#3a7ebf", "#1f538d"),
+}
 
 
-class OptionWindow(ttk.Toplevel):
+class OptionWindow(ctk.CTkToplevel):
     def __init__(self, parent: AppInterface):
         super().__init__(master=parent)
 
@@ -20,7 +34,6 @@ class OptionWindow(ttk.Toplevel):
         self.title("ตั้งค่าการแข่งขัน — Fastmath")
         self.geometry("640x480")
         self.minsize(640, 480)
-        self.place_window_center()
 
         self._create_widgets()
 
@@ -28,56 +41,46 @@ class OptionWindow(ttk.Toplevel):
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
 
-        left_frame = ttk.Frame(self, padding=10, style="light.TFrame")
+        left_frame = ctk.CTkFrame(self)
         left_frame.grid(row=0, column=0, pady=10, padx=10, sticky="nsew")
-        right_frame = ttk.Frame(self, style="light.TFrame")
+        right_frame = ctk.CTkFrame(self, fg_color="transparent")
         right_frame.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="nsew")
 
         round_page = RoundPage(right_frame)
         logo_page = LogoPage(right_frame, app=self.app)
         history_page = HistoryPage(right_frame, app=self.app)
 
-        ttk.Label(
-            left_frame,
-            text="ตั้งค่า",
-            font=("Arial", 16, "bold"),
-            anchor="center",
-            padding=(0, 5, 0, 0),
-            style="light.Inverse.TLabel",
-        ).pack(fill="x")
-
-        ttk.Separator(left_frame).pack(fill="x", pady=10)
-
-        round_page_btn = ttk.Button(
-            left_frame,
-            text="รอบและโจทย์",
-            style="secondary.TButton",
-            command=lambda: self._show_page("round"),
+        ctk.CTkLabel(left_frame, text="ตั้งค่า", font=("Arial", 16, "bold")).pack(
+            fill="x", pady=10
         )
-        round_page_btn.pack(fill="x")
 
-        logo_page_btn = ttk.Button(
+        round_page_btn = ctk.CTkButton(
+            left_frame, text="รอบและโจทย์", command=lambda: self._show_page("round")
+        )
+        round_page_btn.pack(fill="x", padx=10)
+
+        logo_page_btn = ctk.CTkButton(
             left_frame,
             text="ข้อมูลงานแข่งขัน",
-            style="secondary.TButton",
+            **BUTTON_OUTLINE_STYLES,
             command=lambda: self._show_page("logo"),
         )
-        logo_page_btn.pack(fill="x", pady=10)
+        logo_page_btn.pack(fill="x", pady=10, padx=10)
 
-        history_page_btn = ttk.Button(
+        history_page_btn = ctk.CTkButton(
             left_frame,
             text="ประวัติโจทย์",
-            style="secondary.TButton",
+            **BUTTON_OUTLINE_STYLES,
             command=lambda: self._show_page("history"),
         )
-        history_page_btn.pack(fill="x")
+        history_page_btn.pack(fill="x", padx=10)
 
-        ttk.Button(
-            left_frame, text="ปิด", style="Link.TButton", command=self.destroy
-        ).pack(fill="x", expand=True, anchor="s")
+        ctk.CTkButton(
+            left_frame, text="ปิด", **BUTTON_OUTLINE_STYLES, command=self.destroy
+        ).pack(fill="x", expand=True, anchor="s", padx=10, pady=10)
 
         self._current_page: Optional[str] = None
-        self._pages: dict[str, tuple[ttk.Button, ttk.Frame]] = {
+        self._pages: dict[str, tuple[ctk.CTkButton, ctk.CTkFrame]] = {
             "round": (round_page_btn, round_page),
             "logo": (logo_page_btn, logo_page),
             "history": (history_page_btn, history_page),
@@ -90,11 +93,11 @@ class OptionWindow(ttk.Toplevel):
             frame_btn, frame = self._pages[self._current_page]
 
             frame.pack_forget()
-            frame_btn["style"] = "secondary.TButton"
+            frame_btn.configure(**BUTTON_OUTLINE_STYLES)
 
         frame_btn, frame = self._pages[page]
 
         frame.pack(fill="both", expand=True)
-        frame_btn["style"] = "TButton"
+        frame_btn.configure(**BUTTON_DEFAULT_STYLES)
 
         self._current_page = page
