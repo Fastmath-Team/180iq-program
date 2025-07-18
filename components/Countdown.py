@@ -1,11 +1,12 @@
 import math
 
+import customtkinter as ctk
 import ttkbootstrap as ttk
 
 
-class Countdown(ttk.Frame):
+class Countdown(ctk.CTkFrame):
     def __init__(self, master, defaulttime=30, **kwargs):
-        super().__init__(master, style="light.TFrame", **kwargs)
+        super().__init__(master, **kwargs)
 
         self.max_seconds = defaulttime
         self.remaining_seconds = defaulttime
@@ -18,36 +19,32 @@ class Countdown(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
-        self.time_label = time_label = ttk.Label(
+        self.time_label = time_label = ctk.CTkLabel(
             self,
             font=("Arial", 80, "bold"),
-            text=self.remaining_seconds,
+            text=str(self.remaining_seconds),
             anchor="center",
-            style="light.Inverse.TLabel",
         )
         time_label.grid(row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew")
 
         self.time_progress_bar = time_progress_bar = ttk.Floodgauge(
             self,
-            orient=ttk.VERTICAL,
+            orient="vertical",
             maximum=self.max_seconds * 10,
             value=math.ceil(self.remaining_seconds * 10),
             thickness=20,
         )
         time_progress_bar.grid(
-            row=0, column=1, rowspan=2, padx=10, pady=10, sticky=ttk.NSEW
+            row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nsew"
         )
 
-        self.button = button = ttk.Button(
-            self,
-            text="จับเวลา",
-            style="Medium.TButton",
-            command=self._toggle_timer,
+        self.button = button = ctk.CTkButton(
+            self, text="จับเวลา", command=self._toggle_timer
         )
-        button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky=ttk.NSEW)
+        button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky="nsew")
 
     def _update_widgets(self):
-        self.time_label["text"] = math.ceil(self.remaining_seconds)
+        self.time_label.configure(text=str(math.ceil(self.remaining_seconds)))
         self.time_progress_bar["value"] = math.ceil(self.remaining_seconds * 10)
 
     def set_time(self, time: int):
@@ -65,7 +62,7 @@ class Countdown(ttk.Frame):
             self._reset_timer()
 
     def _start_timer(self):
-        self.button["text"] = "รีเซ็ต"
+        self.button.configure(text="รีเซ็ต")
 
         self._update_widgets()
         self._schedule_job()
@@ -73,7 +70,7 @@ class Countdown(ttk.Frame):
     def _reset_timer(self):
         self._cancel_job()
 
-        self.button["text"] = "จับเวลา"
+        self.button.configure(text="จับเวลา")
 
         self.remaining_seconds = self.max_seconds
         self._update_widgets()
