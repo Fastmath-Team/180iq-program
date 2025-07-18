@@ -1,3 +1,5 @@
+import math
+
 import ttkbootstrap as ttk
 
 
@@ -25,11 +27,12 @@ class Countdown(ttk.Frame):
         )
         time_label.grid(row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew")
 
-        self.time_progress_bar = time_progress_bar = ttk.Progressbar(
+        self.time_progress_bar = time_progress_bar = ttk.Floodgauge(
             self,
             orient=ttk.VERTICAL,
-            maximum=self.max_seconds,
-            value=self.remaining_seconds,
+            maximum=self.max_seconds * 10,
+            value=math.ceil(self.remaining_seconds * 10),
+            thickness=20,
         )
         time_progress_bar.grid(
             row=0, column=1, rowspan=2, padx=10, pady=10, sticky=ttk.NSEW
@@ -44,14 +47,14 @@ class Countdown(ttk.Frame):
         button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky=ttk.NSEW)
 
     def _update_widgets(self):
-        self.time_label["text"] = self.remaining_seconds
-        self.time_progress_bar["value"] = self.remaining_seconds
+        self.time_label["text"] = math.ceil(self.remaining_seconds)
+        self.time_progress_bar["value"] = math.ceil(self.remaining_seconds * 10)
 
     def set_time(self, time: int):
         self._cancel_job()
 
         self.max_seconds = time
-        self.time_progress_bar["maximum"] = time
+        self.time_progress_bar["maximum"] = time * 10
 
         self._reset_timer()
 
@@ -76,7 +79,7 @@ class Countdown(ttk.Frame):
         self._update_widgets()
 
     def _schedule_job(self):
-        self.after_job_id = self.after(1000, self._tick)
+        self.after_job_id = self.after(100, self._tick)
 
     def _cancel_job(self):
         if self.after_job_id:
@@ -84,7 +87,7 @@ class Countdown(ttk.Frame):
             self.after_job_id = None
 
     def _tick(self):
-        self.remaining_seconds -= 1
+        self.remaining_seconds = (self.remaining_seconds * 10 - 1) / 10
         self._update_widgets()
         if self.remaining_seconds:
             self._schedule_job()
