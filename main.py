@@ -30,6 +30,10 @@ class App(ttk.Window, AppInterface):
         self._event_name = ttk.StringVar(self, "โปรแกรมคิดเลขเร็ว")
         self._histories = ttk.StringVar(self, "ประวัติโจทย์\n")
 
+
+        self._spin_problem_timer_handle = ''
+        self._spin_answer_timer_handle = ''
+
         self._create_widgets()
         # self.open_option_window()
 
@@ -75,7 +79,7 @@ class App(ttk.Window, AppInterface):
         problem_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
 
-        self.problem_frame = problem_center_frame = Digits(problem_frame)
+        self._problem_frame = problem_center_frame = Digits(problem_frame)
         problem_center_frame.pack(expand=True)
 
         # TODO - สุ่ม math.random() ต่อ digit ได้เลย ไม่ต้องอ้างอิงกฎ
@@ -84,7 +88,7 @@ class App(ttk.Window, AppInterface):
         answer_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
 
-        self.answer_frame = answer_center_frame = Digits(answer_frame)
+        self._answer_frame = answer_center_frame = Digits(answer_frame)
         answer_center_frame.pack(expand=True)
 
         answer_center_frame.set_digits([0] * 2)
@@ -170,10 +174,10 @@ class App(ttk.Window, AppInterface):
         digits = [random.randint(0, 9) for _ in range(4)]
 
         def after_spin():
-            self.problem_frame.stop_spinning()
-            self.problem_frame.set_digits(digits)
+            self._problem_frame.stop_spinning()
+            self._problem_frame.set_digits(digits)
 
-        self.problem_frame.start_spinning()
+        self._problem_frame.start_spinning()
 
         self._spin_problem_timer_handle = self.after(1500, after_spin)
 
@@ -184,10 +188,10 @@ class App(ttk.Window, AppInterface):
         digits = [random.randint(0, 9) for _ in range(2)]
 
         def after_spin():
-            self.answer_frame.stop_spinning()
-            self.answer_frame.set_digits(digits)
+            self._answer_frame.stop_spinning()
+            self._answer_frame.set_digits(digits)
 
-        self.answer_frame.start_spinning()
+        self._answer_frame.start_spinning()
 
         self._spin_answer_timer_handle = self.after(1500, after_spin)
 
