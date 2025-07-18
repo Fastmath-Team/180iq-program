@@ -7,7 +7,7 @@ class Digits(ttk.Frame):
 
         self._digits: list[ttk.Label] = []
 
-        self._spinning_timer_handle: str | None = None
+        self._spinning_timer_handle: str = ''
 
     def set_digits(self, digits: list[int]):
         diff = len(digits) - len(self._digits)
@@ -41,7 +41,7 @@ class Digits(ttk.Frame):
         self._spinning_timer_handle = self.after(50, self._spin)
 
     def stop_spinning(self):
-        if self._spinning_timer_handle is not None:
+        if self._spinning_timer_handle:
             self.after_cancel(self._spinning_timer_handle)
 
     def _spin(self):

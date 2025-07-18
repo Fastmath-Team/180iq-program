@@ -152,6 +152,9 @@ class App(ttk.Window, AppInterface):
         # countdown_seconds.trace_add("write", handle_spin)
 
     def _spin_problem(self):
+        if self._spin_problem_timer_handle:
+            self.after_cancel(self._spin_problem_timer_handle)
+
         digits = [random.randint(0, 9) for _ in range(4)]
 
         def after_spin():
@@ -160,9 +163,12 @@ class App(ttk.Window, AppInterface):
 
         self.problem_frame.start_spinning()
 
-        self.after(2500, after_spin)
+        self._spin_problem_timer_handle = self.after(1500, after_spin)
 
     def _spin_answer(self):
+        if self._spin_answer_timer_handle:
+            self.after_cancel(self._spin_answer_timer_handle)
+
         digits = [random.randint(0, 9) for _ in range(2)]
 
         def after_spin():
@@ -171,7 +177,7 @@ class App(ttk.Window, AppInterface):
 
         self.answer_frame.start_spinning()
 
-        self.after(2500, after_spin)
+        self._spin_answer_timer_handle = self.after(1500, after_spin)
 
     def open_option_window(self):
         window = OptionWindow(self)
