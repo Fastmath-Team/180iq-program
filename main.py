@@ -1,10 +1,13 @@
 import random
+from typing import Literal
+
 import ttkbootstrap as ttk
+from PIL import ImageTk
 
 from components.Countdown import Countdown
 from components.Digits import Digits
-
 from interface import AppInterface
+from utils.logo import update_logo_in_frame
 from windows.Option import OptionWindow
 
 # from utils.validation import validate_positive_number
@@ -56,9 +59,10 @@ class App(ttk.Window, AppInterface):
         event_title_area = ttk.Frame(left_frame)
         event_title_area.pack(fill="x", padx=(10, 0), pady=(10, 0))
 
-        ttk.Label(event_title_area, text="โซนแสดงโลโก้", font=("Arial", 16)).pack(
-            side="left", fill="both", expand=True
-        )
+        self.image_references: list[ImageTk.PhotoImage] = []
+
+        self._event_logo_frame = ttk.Frame(event_title_area, style="light.TFrame")
+        self._event_logo_frame.pack(side="left", fill="both")
 
         self._event_name_label = ttk.Label(
             event_title_area,
@@ -108,12 +112,20 @@ class App(ttk.Window, AppInterface):
         action_frame.pack(fill="x", padx=10, pady=10)
 
         get_question_btn = ttk.Button(
-            action_frame, text="สุ่มโจทย์", padding=10, style="Large.warning.TButton", command=self._spin_problem
+            action_frame,
+            text="สุ่มโจทย์",
+            padding=10,
+            style="Large.warning.TButton",
+            command=self._spin_problem,
         )
         get_question_btn.pack(fill="x")
 
         get_answer_btn = ttk.Button(
-            action_frame, text="สุ่มคำตอบ", padding=10, style="Large.success.TButton", command=self._spin_answer
+            action_frame,
+            text="สุ่มคำตอบ",
+            padding=10,
+            style="Large.success.TButton",
+            command=self._spin_answer,
         )
         get_answer_btn.pack(fill="x", pady=10)
 
@@ -182,6 +194,9 @@ class App(ttk.Window, AppInterface):
     def open_option_window(self):
         window = OptionWindow(self)
         window.grab_set()
+
+    def update_logo(self, filepaths: tuple[str, ...] | Literal[""]):
+        update_logo_in_frame(filepaths, self._event_logo_frame, self.image_references)
 
     @property
     def festname(self) -> ttk.StringVar:

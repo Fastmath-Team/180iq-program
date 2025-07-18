@@ -17,7 +17,7 @@ class OptionWindow(ttk.Toplevel):
 
         self.app = parent
 
-        self.title("ตั้งค่าการแข่งขัน — NSRU x Fastmath")
+        self.title("ตั้งค่าการแข่งขัน — Fastmath")
         self.geometry("640x480")
         self.minsize(640, 480)
         self.place_window_center()
@@ -85,17 +85,16 @@ class OptionWindow(ttk.Toplevel):
 
         self._show_page("round")
 
-
     def _show_page(self, page: str):
         if self._current_page:
             frame_btn, frame = self._pages[self._current_page]
 
             frame.pack_forget()
-            frame_btn["style"] ="secondary.TButton"
+            frame_btn["style"] = "secondary.TButton"
 
         frame_btn, frame = self._pages[page]
 
         frame.pack(fill="both", expand=True)
-        frame_btn["style"] ="TButton"
+        frame_btn["style"] = "TButton"
 
         self._current_page = page
