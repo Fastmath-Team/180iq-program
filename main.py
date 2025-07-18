@@ -1,3 +1,4 @@
+import random
 import ttkbootstrap as ttk
 
 from components.Countdown import Countdown
@@ -70,19 +71,19 @@ class App(ttk.Window, AppInterface):
         problem_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
 
-        problem_center_frame = Digits(problem_frame)
+        self.problem_frame = problem_center_frame = Digits(problem_frame)
         problem_center_frame.pack(expand=True)
 
         # TODO - สุ่ม math.random() ต่อ digit ได้เลย ไม่ต้องอ้างอิงกฎ
-        problem_center_frame.set_digits([0, 1, 2, 3, 4])
+        problem_center_frame.set_digits([0] * 4)
 
         answer_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
 
-        answer_center_frame = Digits(answer_frame)
+        self.answer_frame = answer_center_frame = Digits(answer_frame)
         answer_center_frame.pack(expand=True)
 
-        answer_center_frame.set_digits([0, 1])
+        answer_center_frame.set_digits([0] * 2)
 
         # --- RIGHT SIDE ---
         ttk.Label(right_frame, text="Powered by Fastmath.io", anchor="e").pack(
@@ -107,12 +108,12 @@ class App(ttk.Window, AppInterface):
         action_frame.pack(fill="x", padx=10, pady=10)
 
         get_question_btn = ttk.Button(
-            action_frame, text="สุ่มโจทย์", padding=10, style="Large.warning.TButton"
+            action_frame, text="สุ่มโจทย์", padding=10, style="Large.warning.TButton", command=self._spin_problem
         )
         get_question_btn.pack(fill="x")
 
         get_answer_btn = ttk.Button(
-            action_frame, text="สุ่มคำตอบ", padding=10, style="Large.success.TButton"
+            action_frame, text="สุ่มคำตอบ", padding=10, style="Large.success.TButton", command=self._spin_answer
         )
         get_answer_btn.pack(fill="x", pady=10)
 
@@ -149,6 +150,28 @@ class App(ttk.Window, AppInterface):
         #             pass
 
         # countdown_seconds.trace_add("write", handle_spin)
+
+    def _spin_problem(self):
+        digits = [random.randint(0, 9) for _ in range(4)]
+
+        def after_spin():
+            self.problem_frame.stop_spinning()
+            self.problem_frame.set_digits(digits)
+
+        self.problem_frame.start_spinning()
+
+        self.after(2500, after_spin)
+
+    def _spin_answer(self):
+        digits = [random.randint(0, 9) for _ in range(2)]
+
+        def after_spin():
+            self.answer_frame.stop_spinning()
+            self.answer_frame.set_digits(digits)
+
+        self.answer_frame.start_spinning()
+
+        self.after(2500, after_spin)
 
     def open_option_window(self):
         window = OptionWindow(self)
