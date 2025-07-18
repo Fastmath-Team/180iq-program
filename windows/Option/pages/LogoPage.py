@@ -1,54 +1,50 @@
 from tkinter import filedialog
 
-import customtkinter
-import ttkbootstrap as ttk
+import customtkinter as ctk
 from PIL import ImageTk
 
-# from components.ScrolledFrame import ScrolledFrame
 from interface import AppInterface
 from utils.logo import update_logo_in_frame
 
 
-class LogoPage(ttk.Frame):
+class LogoPage(ctk.CTkFrame):
     def __init__(self, master, app: AppInterface, **kwargs):
-        super().__init__(master, padding=10, style="light.TFrame", **kwargs)
+        super().__init__(master, **kwargs)
 
-        ttk.Label(
-            self,
-            text="ระบุชื่องาน",
-            style="light.Inverse.TLabel",
-        ).pack(fill="x", pady=(0, 5))
+        ctk.CTkLabel(self, text="ระบุชื่องาน", anchor="w").pack(
+            fill="x", padx=10, pady=(10, 5)
+        )
 
-        ttk.Entry(self, textvariable=app.festname, style="dark.TEntry").pack(fill="x")
+        ctk.CTkEntry(self, textvariable=app.festname, placeholder_text="ชื่องานแข่ง").pack(
+            fill="x", padx=10
+        )
 
-        select_logo_frame = ttk.Frame(self)
-        select_logo_frame.pack(fill="x", pady=10)
+        select_logo_frame = ctk.CTkFrame(self, fg_color="transparent")
+        select_logo_frame.pack(fill="x", pady=10, padx=10)
 
-        ttk.Label(
-            select_logo_frame,
-            text="เลือกโลโก้",
-            style="light.Inverse.TLabel",
-        ).pack(side="left", fill="both", expand=True)
+        ctk.CTkLabel(select_logo_frame, text="โลโก้งาน", anchor="w").pack(
+            side="left", fill="both", expand=True
+        )
 
         def select_images():
-            filetypes = [("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")]
+            filetypes = [("ไฟล์รูปภาพ", "*.png *.jpg *.jpeg *.gif *.bmp")]
             filepaths = filedialog.askopenfilenames(
-                title="Select Images", filetypes=filetypes
+                title="เลือกโลโก้", filetypes=filetypes
             )
 
             update_logo_in_frame(filepaths, self.logo_frame, self.image_references, 64)
             app.update_logo(filepaths)
 
-        select_button = ttk.Button(
+        select_button = ctk.CTkButton(
             select_logo_frame,
-            text="Select Images",
+            text="เลือกโลโก้",
             command=select_images,
         )
         select_button.pack(side="right", fill="both")
 
         self.image_references: list[ImageTk.PhotoImage] = []
 
-        self.logo_frame = customtkinter.CTkScrollableFrame(
-            self, orientation="horizontal", height=64
+        self.logo_frame = ctk.CTkScrollableFrame(
+            self, orientation="horizontal", height=72
         )
-        self.logo_frame.pack(fill="x")
+        self.logo_frame.pack(fill="x", padx=10)
