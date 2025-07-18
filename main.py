@@ -1,6 +1,7 @@
 import random
 from typing import Literal
 
+import customtkinter as ctk
 import ttkbootstrap as ttk
 from PIL import ImageTk
 
@@ -13,6 +14,8 @@ from windows.Option import OptionWindow
 # from utils.validation import validate_positive_number
 # import ttkbootstrap.constants as tc
 # import ttkbootstrap.validation as tv
+
+ctk.set_appearance_mode("Light")
 
 
 class App(ttk.Window, AppInterface):
