@@ -21,18 +21,20 @@ class App(ttk.Window, AppInterface):
         self.minsize(800, 600)
         self.place_window_center()
 
-        self._event_name = ttk.StringVar(self, 'คณิตศาสตร์วิชาการ')
-        self._histories = ttk.StringVar(self, 'ประวัติโจทย์\n')
+        self._event_name = ttk.StringVar(self, "คณิตศาสตร์วิชาการ")
+        self._histories = ttk.StringVar(self, "ประวัติโจทย์\n")
 
         self._create_widgets()
         # self.open_option_window()
 
     def _create_widgets(self):
+        # self.style.configure("TLabel", font=("Anuphan"))
+        # self.style.configure("TButton", font=("Anuphan"))
         self.style.configure("Large.warning.TButton", font=(None, 24))
         self.style.configure("Large.success.TButton", font=(None, 24))
         self.style.configure("Medium.TButton", font=(None, 16))
         self.style.configure("bglight.TButton", background="#ebf1fc")
-        self.style.configure("display.light.Inverse.TLabel", background="#f9ffff")
+        self.style.configure("display.light.Inverse.TLabel", background="#fff")
         self.style.configure("lighter.light.TFrame", background="#f9ffff")
         self.style.configure(
             "dark.TEntry", background="#ebf1fc", fieldbackground="#f9ffff"
@@ -69,15 +71,16 @@ class App(ttk.Window, AppInterface):
         problem_center_frame = ttk.Frame(problem_frame, style="light.TFrame")
         problem_center_frame.pack(expand=True)
 
+        # TODO - สุ่ม math.random() ต่อ digit ได้เลย ไม่ต้องอ้างอิงกฎ
         for i in range(5):
             ttk.Label(
                 problem_center_frame,
                 text="0",
-                font=("Arial", 96, "bold"),
+                font=("Arial", 108, "bold"),
                 anchor="center",
                 style="display.light.Inverse.TLabel",
                 padding=(10, -10, 10, -10),
-            ).grid(row=0, padx=5, column=i)
+            ).grid(row=0, column=i)
 
         answer_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
@@ -89,15 +92,15 @@ class App(ttk.Window, AppInterface):
             ttk.Label(
                 answer_center_frame,
                 text="0",
-                font=("Arial", 96, "bold"),
+                font=("Arial", 108, "bold"),
                 anchor="center",
                 style="display.light.Inverse.TLabel",
                 padding=(10, -10, 10, -10),
-            ).grid(row=0, padx=5, column=i)
+            ).grid(row=0, column=i)
 
         # --- RIGHT SIDE ---
         ttk.Label(right_frame, text="Powered by Fastmath.io", anchor="e").pack(
-            fill="x", pady=(10, 0), padx=10
+            fill="x", pady=(10, 8), padx=10
         )
 
         round_frame = ttk.Frame(right_frame, padding=10, style="light.TFrame")
@@ -172,6 +175,7 @@ class App(ttk.Window, AppInterface):
     @property
     def history(self) -> ttk.StringVar:
         return self._histories
+
 
 if __name__ == "__main__":
     app = App()

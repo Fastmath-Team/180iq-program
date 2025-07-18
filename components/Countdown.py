@@ -20,7 +20,7 @@ class Countdown(ttk.Frame):
 
         self.time_label = time_label = ttk.Label(
             self,
-            font=("Arial", 96, "bold"),
+            font=("Arial", 80, "bold"),
             text=self.remaining_seconds,
             anchor="center",
             style="light.Inverse.TLabel",
