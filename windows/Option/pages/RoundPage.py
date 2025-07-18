@@ -1,3 +1,4 @@
+import customtkinter as ctk
 import ttkbootstrap as ttk
 
 from components.RoundOptions import RoundOptions
@@ -21,9 +22,7 @@ class RoundPage(ttk.Frame):
             input_frame, text="เพิ่มรอบการแข่งขัน", style="TButton", command=self.add_round
         ).pack(side="right", fill="both")
 
-        self.content_frame = content_frame = ScrolledFrame(
-            self, padding=(0, 0, 15, 0), style="light.TFrame"
-        )
+        self.content_frame = content_frame = ctk.CTkScrollableFrame(self)
         content_frame.pack(fill="both", expand=True, pady=(10, 0))
 
         self.rounds = [
