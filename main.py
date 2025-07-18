@@ -1,6 +1,8 @@
 import ttkbootstrap as ttk
 
 from components.Countdown import Countdown
+from components.Digits import Digits
+
 from interface import AppInterface
 from windows.Option import OptionWindow
 
@@ -68,35 +70,19 @@ class App(ttk.Window, AppInterface):
         problem_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
 
-        problem_center_frame = ttk.Frame(problem_frame, style="light.TFrame")
+        problem_center_frame = Digits(problem_frame)
         problem_center_frame.pack(expand=True)
 
         # TODO - สุ่ม math.random() ต่อ digit ได้เลย ไม่ต้องอ้างอิงกฎ
-        for i in range(5):
-            ttk.Label(
-                problem_center_frame,
-                text="0",
-                font=("Arial", 108, "bold"),
-                anchor="center",
-                style="display.light.Inverse.TLabel",
-                padding=(10, -10, 10, -10),
-            ).grid(row=0, column=i)
+        problem_center_frame.set_digits([0, 1, 2, 3, 4])
 
         answer_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
 
-        answer_center_frame = ttk.Frame(answer_frame, style="light.TFrame")
+        answer_center_frame = Digits(answer_frame)
         answer_center_frame.pack(expand=True)
 
-        for i in range(3):
-            ttk.Label(
-                answer_center_frame,
-                text="0",
-                font=("Arial", 108, "bold"),
-                anchor="center",
-                style="display.light.Inverse.TLabel",
-                padding=(10, -10, 10, -10),
-            ).grid(row=0, column=i)
+        answer_center_frame.set_digits([0, 1])
 
         # --- RIGHT SIDE ---
         ttk.Label(right_frame, text="Powered by Fastmath.io", anchor="e").pack(
