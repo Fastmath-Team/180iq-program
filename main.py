@@ -19,12 +19,12 @@ class App(ttk.Window, AppInterface):
         self.style.load_user_themes("./theme.json")
         self.style.theme_use("nsru")
 
-        self.title("คิดเลขเร็วคณิตศาสตร์วิชาการ — NSRU x Fastmath")
+        self.title("โปรแกรมคิดเลขเร็ว — Fastmath")
         self.geometry("800x600")
         self.minsize(800, 600)
         self.place_window_center()
 
-        self._event_name = ttk.StringVar(self, "คณิตศาสตร์วิชาการ")
+        self._event_name = ttk.StringVar(self, "โปรแกรมคิดเลขเร็ว")
         self._histories = ttk.StringVar(self, "ประวัติโจทย์\n")
 
         self._create_widgets()
