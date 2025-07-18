@@ -1,19 +1,21 @@
 from typing import Callable, Self
 import ttkbootstrap as ttk
+from interface import RoundOptions
 
-
-class RoundOptions(ttk.Frame):
-    def __init__(self, master, on_remove: Callable[[Self], None], **kwargs):
+class RoundOptionFrame(ttk.Frame):
+    def __init__(self, master, index: int, option: RoundOptions, on_remove: Callable[[int], None], **kwargs):
         super().__init__(master, padding=1, **kwargs)
 
-        self.round = ttk.IntVar(value=1)
+        self._index = index
 
-        self.question_count_var = ttk.StringVar(value="10")
-        self.time_per_question = ttk.StringVar(value="30")
-        self.question_digit = ttk.StringVar(value="4")
-        self.question_answer_digit = ttk.StringVar(value="2")
+        # added to self to prevent GC
+        # https://stackoverflow.com/a/37351021/2736814
+        self._question_count = question_count = ttk.IntVar(value=option.question_count)
+        self._time_per_question = time_per_question = ttk.IntVar(value=option.time_per_question)
+        self._question_digit = question_digit = ttk.IntVar(value=option.question_digit)
+        self._answer_digit = answer_digit = ttk.IntVar(value=option.answer_digit)
 
-        self.master_frame = master_frame = ttk.Frame(
+        master_frame = ttk.Frame(
             self, padding=10, style="lighter.light.TFrame"
         )
         master_frame.pack(fill="both", expand=True)
@@ -21,23 +23,20 @@ class RoundOptions(ttk.Frame):
         title_frame = ttk.Frame(master_frame)
         title_frame.pack(fill="x")
 
-        self.round_label = ttk.Label(
+        round_label = ttk.Label(
             title_frame,
-            text=f"รอบที่ {self.round.get()}",
+            text=f"รอบที่ {index + 1}",
             style="light.Inverse.TLabel",
         )
-        self.round_label.pack(side="left", fill="both", expand=True)
+        round_label.pack(side="left", fill="both", expand=True)
 
-        def update_round_label(*args):
-            self.round_label["text"] = f"รอบที่ {self.round.get()}"
-
-        self.round.trace_add("write", update_round_label)
+        self._round_label = round_label
 
         ttk.Button(
             title_frame,
             text="ลบรอบ",
             style="TButton",
-            command=lambda: on_remove(self),
+            command=lambda: on_remove(self._index),
         ).pack(side="right", fill="both")
 
         options_grid = ttk.Frame(master_frame)
@@ -55,7 +54,7 @@ class RoundOptions(ttk.Frame):
             options_grid,
             from_=1,
             to=100,
-            textvariable=self.question_count_var,
+            textvariable=question_count,
         ).grid(row=0, column=1, sticky="ew", padx=5, pady=5)
 
         ttk.Label(options_grid, text="ระยะเวลา (วินาที)").grid(
@@ -65,7 +64,7 @@ class RoundOptions(ttk.Frame):
             options_grid,
             from_=10,
             to=60,
-            textvariable=self.time_per_question,
+            textvariable=time_per_question,
         ).grid(row=0, column=3, sticky="ew", padx=5, pady=5)
 
         ttk.Label(options_grid, text="จำนวนเลขสุ่มในโจทย์").grid(
@@ -75,7 +74,7 @@ class RoundOptions(ttk.Frame):
             options_grid,
             state="readonly",
             values=["3", "4", "5"],
-            textvariable=self.question_digit,
+            textvariable=question_digit,
         ).grid(row=1, column=1, sticky="ew", padx=5, pady=5)
 
         ttk.Label(options_grid, text="จำนวนหลักของคำตอบ").grid(
@@ -85,7 +84,7 @@ class RoundOptions(ttk.Frame):
             options_grid,
             state="readonly",
             values=["1", "2", "3"],
-            textvariable=self.question_answer_digit,
+            textvariable=answer_digit,
         ).grid(row=1, column=3, sticky="ew", padx=5, pady=5)
 
         ttk.Label(
@@ -94,43 +93,61 @@ class RoundOptions(ttk.Frame):
             style="light.Inverse.TLabel",
         ).pack(fill="both")
 
-        self.highlight_frame = None
-        self.hightlighted_digits = [
-            ttk.BooleanVar(),
-            ttk.BooleanVar(),
-            ttk.BooleanVar(),
-            ttk.BooleanVar(),
-            ttk.BooleanVar(),
-        ]
-
-        def handle_problem_digits(*args):
-            if self.question_digit.get():
-                try:
-                    self._redisplay_checkboxes()
-                except ValueError:
-                    pass
-
-        self.question_digit.trace_add("write", handle_problem_digits)
-
-        self._redisplay_checkboxes()
-
-    def _redisplay_checkboxes(self):
-        if self.highlight_frame is not None:
-            self.highlight_frame.destroy()
-
-        self.highlight_frame = ttk.Frame(
-            self.master_frame, style="lighter.light.TFrame"
+        highlight_frame = ttk.Frame(
+            master_frame, style="lighter.light.TFrame"
         )
-        self.highlight_frame.pack(fill="x", pady=(10, 0))
+        highlight_frame.pack(fill="x", pady=(10, 0))
 
-        for i in range(5):
-            self.hightlighted_digits[i].set(False)
+        current_digits: list[ttk.Checkbutton] = []
 
-        for i in range(int(self.question_digit.get())):
-            self.highlight_frame.columnconfigure(i, weight=1)
-            check = ttk.Checkbutton(
-                self.highlight_frame,
-                text=f"{i + 1}",
-                variable=self.hightlighted_digits[i],
+        # capture loop variables
+        def on_update_highlighted_digits(i: int, check_var: ttk.BooleanVar):
+            return lambda *_: (
+                option.highlighted_question_digits.add(i) if check_var.get() else
+                option.highlighted_question_digits.discard(i)
             )
-            check.grid(row=0, column=i)
+
+        def redraw_checkboxes():
+            for i, check in enumerate(current_digits):
+                check.destroy()
+
+                highlight_frame.columnconfigure(i, weight=0)
+
+            current_digits.clear()
+
+            for i in range(option.question_digit):
+                check_var = ttk.BooleanVar(value=i in option.highlighted_question_digits)
+                check_var.trace_add("write", on_update_highlighted_digits(i, check_var))
+
+                highlight_frame.columnconfigure(i, weight=1)
+
+                check = ttk.Checkbutton(
+                    highlight_frame,
+                    text=f"{i + 1}",
+                    variable=check_var,
+                )
+                check.grid(row=0, column=i)
+
+
+                current_digits.append(check)
+
+        redraw_checkboxes()
+
+        def on_question_count_changed(*_): option.question_count = question_count.get()
+        def on_time_per_question_changed(*_): option.time_per_question = time_per_question.get()
+        def on_question_digit_changed(*_):
+            option.question_digit = question_digit.get()
+
+            redraw_checkboxes()
+
+        def on_answer_digit_changed(*_): option.answer_digit = answer_digit.get()
+
+        question_count.trace_add("write", on_question_count_changed)
+        time_per_question.trace_add("write", on_time_per_question_changed)
+        question_digit.trace_add("write", on_question_digit_changed)
+        answer_digit.trace_add("write", on_answer_digit_changed)
+
+    def set_index(self, index: int):
+        self._index = index
+
+        self._round_label["text"] = f"รอบที่ {index + 1}"

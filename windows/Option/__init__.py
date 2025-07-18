@@ -46,7 +46,7 @@ class OptionWindow(ctk.CTkToplevel):
         right_frame = ctk.CTkFrame(self, fg_color="transparent")
         right_frame.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="nsew")
 
-        round_page = RoundPage(right_frame)
+        round_page = RoundPage(right_frame, app=self.app)
         logo_page = LogoPage(right_frame, app=self.app)
         history_page = HistoryPage(right_frame, app=self.app)
 

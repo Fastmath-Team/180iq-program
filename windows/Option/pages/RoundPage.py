@@ -1,13 +1,16 @@
 import customtkinter as ctk
 import ttkbootstrap as ttk
 
-from components.RoundOptions import RoundOptions
+from components.RoundOptions import RoundOptionFrame
 from components.ScrolledFrame import ScrolledFrame
+from interface import AppInterface, RoundOptions
 
 
 class RoundPage(ttk.Frame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, app: AppInterface, **kwargs):
         super().__init__(master, padding=10, style="light.TFrame", **kwargs)
+
+        self._round_options = app.round_options
 
         input_frame = ttk.Frame(self)
         input_frame.pack(fill="x")
@@ -22,32 +25,56 @@ class RoundPage(ttk.Frame):
             input_frame, text="เพิ่มรอบการแข่งขัน", style="TButton", command=self.add_round
         ).pack(side="right", fill="both")
 
-        self.content_frame = content_frame = ctk.CTkScrollableFrame(self)
+        self._content_frame = content_frame = ctk.CTkScrollableFrame(self)
         content_frame.pack(fill="both", expand=True, pady=(10, 0))
 
-        self.rounds = [
-            RoundOptions(content_frame, on_remove=self.remove_round),
-            RoundOptions(content_frame, on_remove=self.remove_round),
-            RoundOptions(content_frame, on_remove=self.remove_round),
-            RoundOptions(content_frame, on_remove=self.remove_round),
+        self._rounds = rounds = [
+            RoundOptionFrame(
+                content_frame,
+
+                index=i,
+                option=round_option,
+
+                on_remove=self.remove_round
+            )
+            for i, round_option in enumerate(app.round_options)
         ]
 
-        for round in self.rounds:
+        for round in rounds:
             round.pack(fill="x")
 
         self._renumber_rounds()
 
     def _renumber_rounds(self):
-        for idx, round in enumerate(self.rounds):
-            round.round.set(idx + 1)
+        for idx, round in enumerate(self._rounds):
+            round.set_index(idx)
 
     def add_round(self):
-        round = RoundOptions(self.content_frame, on_remove=self.remove_round)
-        round.pack(fill="x")
-        self.rounds.append(round)
-        self._renumber_rounds()
+        round_option = RoundOptions(
+            question_count=10,
+            time_per_question=30,
+            question_digit=4,
+            answer_digit=2,
+            highlighted_question_digits=set()
+        )
 
-    def remove_round(self, item: RoundOptions):
+        round = RoundOptionFrame(
+            self._content_frame,
+
+            index=len(self._rounds) + 1,
+            option=round_option,
+
+            on_remove=self.remove_round
+        )
+        round.pack(fill="x")
+
+        self._rounds.append(round)
+        self._round_options.append(round_option)
+
+    def remove_round(self, i: int):
+        self._round_options.pop(i)
+
+        item = self._rounds.pop(i)
         item.destroy()
-        self.rounds.remove(item)
+
         self._renumber_rounds()
