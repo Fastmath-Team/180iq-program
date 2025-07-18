@@ -1,56 +1,50 @@
 from tkinter import messagebox
 
-import ttkbootstrap as ttk
+import customtkinter as ctk
 
 from interface import AppInterface
 
 
-class HistoryPage(ttk.Frame):
+class HistoryPage(ctk.CTkFrame):
     def __init__(self, master, app: AppInterface, **kwargs):
-        super().__init__(master, padding=10, style="light.TFrame", **kwargs)
+        super().__init__(master, **kwargs)
 
-        self.app = app
+        self._app = app
 
-        top_frame = ttk.Frame(self)
-        top_frame.pack(fill="x", pady=(0, 5))
+        top_frame = ctk.CTkFrame(self, fg_color="transparent")
+        top_frame.pack(fill="x", pady=10, padx=10)
 
-        ttk.Label(
-            top_frame,
-            text="ประวัติโจทย์",
-            style="light.Inverse.TLabel",
-        ).pack(side="left", fill="both", expand=True)
+        ctk.CTkLabel(top_frame, text="ประวัติโจทย์", anchor="w").pack(
+            side="left", fill="both", expand=True
+        )
 
-        ttk.Button(
+        ctk.CTkButton(
             top_frame,
             text="คัดลอก",
-            style="TButton",
             command=self._copy_text,
         ).pack(side="right", fill="both")
 
-        self.history_textbox = ttk.Text(self, state="disabled", wrap="word")
-        self.history_textbox.configure(
-            bg="#f9ffff", highlightbackground="#163557", highlightcolor="#163557"
-        )
-        self.history_textbox.pack(fill="both", expand=True)
+        self._history_textbox = ctk.CTkTextbox(self, state="disabled", wrap="word")
+        self._history_textbox.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
         def update_history(*args):
             if str := app.history.get():
                 try:
-                    self.set_text(str)
+                    self._set_text(str)
                 except ValueError:
                     pass
 
         app.history.trace_add("write", update_history)
 
-        self.set_text(app.history.get())
+        self._set_text(app.history.get())
 
-    def set_text(self, text: str):
-        self.history_textbox["state"] ="normal"
-        self.history_textbox.delete(1.0, "end")
-        self.history_textbox.insert("end", text)
-        self.history_textbox["state"] ="disabled"
+    def _set_text(self, text: str):
+        self._history_textbox.configure(state="normal")
+        self._history_textbox.delete(1.0, "end")
+        self._history_textbox.insert("end", text)
+        self._history_textbox.configure(state="disabled")
 
     def _copy_text(self):
         self.clipboard_clear()
-        self.clipboard_append(self.app.history.get())
+        self.clipboard_append(self._app.history.get())
         messagebox.showinfo("คัดลอกสำเร็จ", "คัดลอกประวัติโจทย์เรียบร้อยแล้ว")
