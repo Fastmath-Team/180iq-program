@@ -142,13 +142,18 @@ class App(ttk.Window, AppInterface):
             style="light.Inverse.TLabel",
         ).pack(fill="x")
 
-        cnt = Countdown(right_frame, 30)
+        cnt = Countdown(
+            right_frame,
+            30,
+            on_begin=self._on_countdown_begin,
+            on_end=self._on_countdown_end
+        )
         cnt.pack(fill="both", padx=10, expand=True)
 
         action_frame = ttk.Frame(right_frame, padding=10, style="light.TFrame")
         action_frame.pack(fill="x", padx=10, pady=10)
 
-        get_question_btn = ttk.Button(
+        self._get_question_btn = get_question_btn = ttk.Button(
             action_frame,
             text="สุ่มโจทย์",
             padding=10,
@@ -157,7 +162,7 @@ class App(ttk.Window, AppInterface):
         )
         get_question_btn.pack(fill="x")
 
-        get_answer_btn = ttk.Button(
+        self._get_answer_btn = get_answer_btn = ttk.Button(
             action_frame,
             text="สุ่มคำตอบ",
             padding=10,
@@ -171,13 +176,13 @@ class App(ttk.Window, AppInterface):
 
         action_ext_frame.columnconfigure(1, weight=1)
 
-        prev_btn = ttk.Button(action_ext_frame, text="⬅︎", style="bglight.TButton")
+        self._prev_btn = prev_btn = ttk.Button(action_ext_frame, text="⬅︎", style="bglight.TButton")
         prev_btn.grid(row=0, column=0, sticky="w")
 
-        next_btn = ttk.Button(action_ext_frame, text="ข้อถัดไป", style="bglight.TButton")
+        self._next_btn = next_btn = ttk.Button(action_ext_frame, text="ข้อถัดไป", style="bglight.TButton")
         next_btn.grid(row=0, column=1, sticky="ew", padx=10)
 
-        config_btn = ttk.Button(
+        self._config_btn = config_btn = ttk.Button(
             action_ext_frame,
             text="⚙️",
             style="bglight.TButton",
@@ -227,6 +232,20 @@ class App(ttk.Window, AppInterface):
         self._answer_frame.start_spinning()
 
         self._spin_answer_timer_handle = self.after(1500, after_spin)
+
+    def _on_countdown_begin(self):
+        self._get_question_btn['state'] = 'disabled'
+        self._get_answer_btn['state'] = 'disabled'
+        self._prev_btn['state'] = 'disabled'
+        self._next_btn['state'] = 'disabled'
+        self._config_btn['state'] = 'disabled'
+
+    def _on_countdown_end(self):
+        self._get_question_btn['state'] = 'normal'
+        self._get_answer_btn['state'] = 'normal'
+        self._prev_btn['state'] = 'normal'
+        self._next_btn['state'] = 'normal'
+        self._config_btn['state'] = 'normal'
 
     def open_option_window(self):
         window = OptionWindow(self)

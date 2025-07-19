@@ -1,17 +1,29 @@
 import math
+from typing import Callable
 
 import customtkinter as ctk
 import ttkbootstrap as ttk
 
+TimerCallback = Callable[[], None]
 
 class Countdown(ctk.CTkFrame):
-    def __init__(self, master, defaulttime=30, **kwargs):
+    def __init__(
+        self,
+        master,
+        default_time=30,
+        on_begin: TimerCallback | None = None,
+        on_end: TimerCallback | None = None,
+        **kwargs
+    ):
         super().__init__(master, **kwargs)
 
-        self.max_seconds = defaulttime
-        self.remaining_seconds = defaulttime
+        self.max_seconds = default_time
+        self.remaining_seconds = default_time
 
-        self.after_job_id = None
+        self._on_begin = on_begin
+        self._on_end = on_end
+
+        self._tick_timer_handle = ''
 
         self._create_widgets()
 
@@ -67,6 +79,9 @@ class Countdown(ctk.CTkFrame):
         self._update_widgets()
         self._schedule_job()
 
+        if self._on_begin:
+            self._on_begin()
+
     def _reset_timer(self):
         self._cancel_job()
 
@@ -75,13 +90,16 @@ class Countdown(ctk.CTkFrame):
         self.remaining_seconds = self.max_seconds
         self._update_widgets()
 
+        if self._on_end:
+            self._on_end()
+
     def _schedule_job(self):
-        self.after_job_id = self.after(100, self._tick)
+        self._tick_timer_handle = self.after(100, self._tick)
 
     def _cancel_job(self):
-        if self.after_job_id:
-            self.after_cancel(self.after_job_id)
-            self.after_job_id = None
+        if self._tick_timer_handle:
+            self.after_cancel(self._tick_timer_handle)
+            self._tick_timer_handle = ''
 
     def _tick(self):
         self.remaining_seconds = (self.remaining_seconds * 10 - 1) / 10
