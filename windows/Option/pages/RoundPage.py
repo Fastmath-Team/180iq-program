@@ -61,7 +61,7 @@ class RoundPage(ttk.Frame):
         round = RoundOptionFrame(
             self._content_frame,
 
-            index=len(self._rounds) + 1,
+            index=len(self._rounds),
             option=round_option,
 
             on_remove=self.remove_round
