@@ -2,15 +2,14 @@ import customtkinter as ctk
 import ttkbootstrap as ttk
 
 from components.RoundOptions import RoundOptionFrame
-from components.ScrolledFrame import ScrolledFrame
-from interface import AppInterface, RoundOptions
+from interface import AppInterface, Round, RoundOptions
 
 
 class RoundPage(ttk.Frame):
     def __init__(self, master, app: AppInterface, **kwargs):
         super().__init__(master, padding=10, style="light.TFrame", **kwargs)
 
-        self._round_options = app.round_options
+        self._rounds = app.rounds
 
         input_frame = ttk.Frame(self)
         input_frame.pack(fill="x")
@@ -28,17 +27,16 @@ class RoundPage(ttk.Frame):
         self._content_frame = content_frame = ctk.CTkScrollableFrame(self)
         content_frame.pack(fill="both", expand=True, pady=(10, 0))
 
-        self._rounds = rounds = [
+        self._round_frames = rounds = [
             RoundOptionFrame(
                 content_frame,
 
                 index=i,
-                can_delete=False,
-                option=round_option,
+                round=round,
 
                 on_remove=self.remove_round
             )
-            for i, round_option in enumerate(app.round_options)
+            for i, round in enumerate(app.rounds)
         ]
 
         for round in rounds:
@@ -47,40 +45,42 @@ class RoundPage(ttk.Frame):
         self._renumber_rounds()
 
     def _renumber_rounds(self):
-        can_delete = len(self._round_options) > 1
+        can_delete = len(self._rounds) > 1
 
-        for idx, round in enumerate(self._rounds):
+        for idx, round in enumerate(self._round_frames):
             round.set_index(idx, can_delete)
 
     def add_round(self):
-        round_option = RoundOptions(
-            question_count=10,
-            time_per_question=30,
-            question_digit=4,
-            answer_digit=2,
-            highlighted_question_digits=set()
+        round = Round(
+            items=[],
+            options=RoundOptions(
+                question_count=10,
+                time_per_question=30,
+                question_digit=4,
+                answer_digit=2,
+                highlighted_question_digits=set()
+            ),
         )
 
-        round = RoundOptionFrame(
+        round_frame = RoundOptionFrame(
             self._content_frame,
 
-            index=len(self._rounds),
-            can_delete=False,
-            option=round_option,
+            index=len(self._round_frames),
+            round=round,
 
             on_remove=self.remove_round
         )
-        round.pack(fill="x")
+        round_frame.pack(fill="x")
 
+        self._round_frames.append(round_frame)
         self._rounds.append(round)
-        self._round_options.append(round_option)
 
         self._renumber_rounds()
 
     def remove_round(self, i: int):
-        self._round_options.pop(i)
+        self._rounds.pop(i)
 
-        item = self._rounds.pop(i)
+        item = self._round_frames.pop(i)
         item.destroy()
 
         self._renumber_rounds()

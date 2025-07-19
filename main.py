@@ -7,7 +7,7 @@ from PIL import ImageTk
 
 from components.Countdown import Countdown
 from components.Digits import Digits
-from interface import AppInterface, RoundOptions
+from interface import AppInterface, QuestionAnswer, Round, RoundOptions
 from utils.logo import update_logo_in_frame
 from windows.Option import OptionWindow
 
@@ -31,35 +31,57 @@ class App(ttk.Window, AppInterface):
         self.place_window_center()
 
         self._event_name = "โปรแกรมคิดเลขเร็ว"
-        self._histories = ttk.StringVar(self, "ประวัติโจทย์\n")
-        self._round_options = [
-            RoundOptions(
-                question_count=10,
-                time_per_question=30,
-                question_digit=4,
-                answer_digit=2,
-                highlighted_question_digits=set()
+        self._rounds: list[Round] = [
+            Round(
+                items=[],
+                options=RoundOptions(
+                    question_count=10,
+                    time_per_question=30,
+                    question_digit=4,
+                    answer_digit=2,
+                    highlighted_question_digits=set()
+                ),
             ),
-            RoundOptions(
-                question_count=10,
-                time_per_question=30,
-                question_digit=4,
-                answer_digit=2,
-                highlighted_question_digits=set()
+
+            Round(
+                items=[],
+                options=RoundOptions(
+                    question_count=10,
+                    time_per_question=30,
+                    question_digit=4,
+                    answer_digit=2,
+                    highlighted_question_digits=set()
+                )
             ),
-            RoundOptions(
-                question_count=10,
-                time_per_question=30,
-                question_digit=4,
-                answer_digit=2,
-                highlighted_question_digits=set()
+            Round(
+                items=[],
+                options=RoundOptions(
+                    question_count=10,
+                    time_per_question=30,
+                    question_digit=4,
+                    answer_digit=2,
+                    highlighted_question_digits=set()
+                ),
             ),
-            RoundOptions(
-                question_count=10,
-                time_per_question=30,
-                question_digit=4,
-                answer_digit=2,
-                highlighted_question_digits=set()
+            Round(
+                items=[],
+                options=RoundOptions(
+                    question_count=10,
+                    time_per_question=30,
+                    question_digit=4,
+                    answer_digit=2,
+                    highlighted_question_digits=set()
+                ),
+            ),
+            Round(
+                items=[],
+                options=RoundOptions(
+                    question_count=10,
+                    time_per_question=30,
+                    question_digit=4,
+                    answer_digit=2,
+                    highlighted_question_digits=set()
+                ),
             ),
         ]
 
@@ -264,12 +286,11 @@ class App(ttk.Window, AppInterface):
         self._event_name_label["text"] = value
 
     @property
-    def history(self) -> ttk.StringVar:
-        return self._histories
+    def rounds(self):
+        return self._rounds
 
-    @property
-    def round_options(self) -> list[RoundOptions]:
-        return self._round_options
+    def add_history(self, value: QuestionAnswer):
+        ...
 
 
 if __name__ == "__main__":

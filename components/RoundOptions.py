@@ -1,6 +1,7 @@
 from typing import Callable
+from interface import Round
+
 import ttkbootstrap as ttk
-from interface import RoundOptions
 
 class RoundOptionFrame(ttk.Frame):
     def __init__(
@@ -8,15 +9,17 @@ class RoundOptionFrame(ttk.Frame):
         master,
 
         index: int,
-        can_delete: bool,
-
-        option: RoundOptions,
+        round: Round,
 
         on_remove: Callable[[int], None],
 
         **kwargs
     ):
         super().__init__(master, padding=1, **kwargs)
+
+        self._items = round.items
+
+        option = round.options
 
         # added to self to prevent GC
         # https://stackoverflow.com/a/37351021/2736814
@@ -154,14 +157,14 @@ class RoundOptionFrame(ttk.Frame):
         question_digit.trace_add("write", on_question_digit_changed)
         answer_digit.trace_add("write", on_answer_digit_changed)
 
-        self.set_index(index, can_delete)
+        self.set_index(index, False)
 
     def set_index(self, index: int, can_delete: bool):
         self._index = index
 
         self._round_label["text"] = f"รอบที่ {index + 1}"
 
-        if can_delete:
+        if can_delete and len(self._items) == 0:
             self._remove_btn.pack(side="right", fill="both")
         else:
             self._remove_btn.pack_forget()

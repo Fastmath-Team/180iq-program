@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import Literal
 
-import ttkbootstrap as ttk
-
 @dataclass
 class RoundOptions:
     question_count: int
@@ -10,6 +8,16 @@ class RoundOptions:
     question_digit: int | Literal[4, 5]
     answer_digit: int | Literal[2, 3]
     highlighted_question_digits: set[int]
+
+@dataclass(frozen=True)
+class QuestionAnswer:
+    question: list[int]
+    answer: int
+
+@dataclass(frozen=True)
+class Round:
+    items: list[QuestionAnswer]
+    options: RoundOptions
 
 class AppInterface:
     def update_logo(self, filepaths: tuple[str, ...] | Literal[""]):
@@ -24,9 +32,8 @@ class AppInterface:
         raise NotImplementedError()
 
     @property
-    def history(self) -> ttk.StringVar:
+    def rounds(self) -> list[Round]:
         raise NotImplementedError()
 
-    @property
-    def round_options(self) -> list[RoundOptions]:
+    def add_history(self, value: QuestionAnswer):
         raise NotImplementedError()
