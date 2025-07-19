@@ -180,7 +180,7 @@ class App(ttk.Window, AppInterface):
             text="สุ่มโจทย์",
             padding=10,
             style="Large.warning.TButton",
-            command=self._spin_problem,
+            command=self._on_spin_problem,
         )
         get_question_btn.pack(fill="x")
 
@@ -189,7 +189,7 @@ class App(ttk.Window, AppInterface):
             text="สุ่มคำตอบ",
             padding=10,
             style="Large.success.TButton",
-            command=self._spin_answer,
+            command=self._on_spin_answer,
         )
         get_answer_btn.pack(fill="x", pady=10)
 
@@ -208,7 +208,7 @@ class App(ttk.Window, AppInterface):
             action_ext_frame,
             text="⚙️",
             style="bglight.TButton",
-            command=self.open_option_window,
+            command=self._on_open_option_window,
         )
         config_btn.grid(row=0, column=2, sticky="e")
 
@@ -227,7 +227,7 @@ class App(ttk.Window, AppInterface):
 
         # countdown_seconds.trace_add("write", handle_spin)
 
-    def _spin_problem(self):
+    def _on_spin_problem(self):
         if self._spin_problem_timer_handle:
             self.after_cancel(self._spin_problem_timer_handle)
 
@@ -241,7 +241,7 @@ class App(ttk.Window, AppInterface):
 
         self._spin_problem_timer_handle = self.after(1500, after_spin)
 
-    def _spin_answer(self):
+    def _on_spin_answer(self):
         if self._spin_answer_timer_handle:
             self.after_cancel(self._spin_answer_timer_handle)
 
@@ -269,7 +269,7 @@ class App(ttk.Window, AppInterface):
         self._next_btn['state'] = 'normal'
         self._config_btn['state'] = 'normal'
 
-    def open_option_window(self):
+    def _on_open_option_window(self):
         window = OptionWindow(self)
         window.grab_set()
 
