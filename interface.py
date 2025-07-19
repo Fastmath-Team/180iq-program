@@ -16,7 +16,11 @@ class AppInterface:
         raise NotImplementedError()
 
     @property
-    def festname(self) -> ttk.StringVar:
+    def festname(self) -> str:
+        raise NotImplementedError()
+
+    @festname.setter
+    def festname(self, value: str):
         raise NotImplementedError()
 
     @property

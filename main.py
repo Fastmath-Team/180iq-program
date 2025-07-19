@@ -30,7 +30,7 @@ class App(ttk.Window, AppInterface):
         self.minsize(800, 600)
         self.place_window_center()
 
-        self._event_name = ttk.StringVar(self, "โปรแกรมคิดเลขเร็ว")
+        self._event_name = "โปรแกรมคิดเลขเร็ว"
         self._histories = ttk.StringVar(self, "ประวัติโจทย์\n")
         self._round_options = [
             RoundOptions(
@@ -101,13 +101,13 @@ class App(ttk.Window, AppInterface):
         self._event_logo_frame = ttk.Frame(event_title_area, style="light.TFrame")
         self._event_logo_frame.pack(side="left", fill="both")
 
-        self._event_name_label = ttk.Label(
+        self._event_name_label = event_name_label = ttk.Label(
             event_title_area,
-            textvariable=self._event_name,
+            text=self._event_name,
             font=("Arial", 16),
             anchor="e",
         )
-        self._event_name_label.pack(side="right", fill="both", expand=True)
+        event_name_label.pack(side="right", fill="both", expand=True)
 
         problem_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
@@ -255,8 +255,13 @@ class App(ttk.Window, AppInterface):
         update_logo_in_frame(filepaths, self._event_logo_frame, self.image_references)
 
     @property
-    def festname(self) -> ttk.StringVar:
+    def festname(self) -> str:
         return self._event_name
+
+    @festname.setter
+    def festname(self, value: str):
+        self._event_name = value
+        self._event_name_label["text"] = value
 
     @property
     def history(self) -> ttk.StringVar:

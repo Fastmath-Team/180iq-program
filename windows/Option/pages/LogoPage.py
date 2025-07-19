@@ -1,4 +1,5 @@
 from tkinter import filedialog
+import tkinter as tk
 
 import customtkinter as ctk
 from PIL import ImageTk
@@ -15,7 +16,14 @@ class LogoPage(ctk.CTkFrame):
             fill="x", padx=10, pady=(10, 5)
         )
 
-        ctk.CTkEntry(self, textvariable=app.festname, placeholder_text="ชื่องานแข่ง").pack(
+        festname = tk.StringVar(value=app.festname)
+
+        def update_festname(*_):
+            app.festname = festname.get()
+
+        festname.trace_add("write", update_festname)
+
+        ctk.CTkEntry(self, textvariable=festname, placeholder_text="ชื่องานแข่ง").pack(
             fill="x", padx=10
         )
 
