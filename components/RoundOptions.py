@@ -1,12 +1,22 @@
-from typing import Callable, Self
+from typing import Callable
 import ttkbootstrap as ttk
 from interface import RoundOptions
 
 class RoundOptionFrame(ttk.Frame):
-    def __init__(self, master, index: int, option: RoundOptions, on_remove: Callable[[int], None], **kwargs):
-        super().__init__(master, padding=1, **kwargs)
+    def __init__(
+        self,
+        master,
 
-        self._index = index
+        index: int,
+        can_delete: bool,
+
+        option: RoundOptions,
+
+        on_remove: Callable[[int], None],
+
+        **kwargs
+    ):
+        super().__init__(master, padding=1, **kwargs)
 
         # added to self to prevent GC
         # https://stackoverflow.com/a/37351021/2736814
@@ -23,21 +33,18 @@ class RoundOptionFrame(ttk.Frame):
         title_frame = ttk.Frame(master_frame)
         title_frame.pack(fill="x")
 
-        round_label = ttk.Label(
+        self._round_label = round_label = ttk.Label(
             title_frame,
-            text=f"รอบที่ {index + 1}",
             style="light.Inverse.TLabel",
         )
         round_label.pack(side="left", fill="both", expand=True)
 
-        self._round_label = round_label
-
-        ttk.Button(
+        self._remove_btn = ttk.Button(
             title_frame,
             text="ลบรอบ",
             style="TButton",
             command=lambda: on_remove(self._index),
-        ).pack(side="right", fill="both")
+        )
 
         options_grid = ttk.Frame(master_frame)
         options_grid.pack(fill="x", pady=5, expand=True)
@@ -147,7 +154,14 @@ class RoundOptionFrame(ttk.Frame):
         question_digit.trace_add("write", on_question_digit_changed)
         answer_digit.trace_add("write", on_answer_digit_changed)
 
-    def set_index(self, index: int):
+        self.set_index(index, can_delete)
+
+    def set_index(self, index: int, can_delete: bool):
         self._index = index
 
         self._round_label["text"] = f"รอบที่ {index + 1}"
+
+        if can_delete:
+            self._remove_btn.pack(side="right", fill="both")
+        else:
+            self._remove_btn.pack_forget()

@@ -33,6 +33,7 @@ class RoundPage(ttk.Frame):
                 content_frame,
 
                 index=i,
+                can_delete=False,
                 option=round_option,
 
                 on_remove=self.remove_round
@@ -46,8 +47,10 @@ class RoundPage(ttk.Frame):
         self._renumber_rounds()
 
     def _renumber_rounds(self):
+        can_delete = len(self._round_options) > 1
+
         for idx, round in enumerate(self._rounds):
-            round.set_index(idx)
+            round.set_index(idx, can_delete)
 
     def add_round(self):
         round_option = RoundOptions(
@@ -62,6 +65,7 @@ class RoundPage(ttk.Frame):
             self._content_frame,
 
             index=len(self._rounds),
+            can_delete=False,
             option=round_option,
 
             on_remove=self.remove_round
@@ -70,6 +74,8 @@ class RoundPage(ttk.Frame):
 
         self._rounds.append(round)
         self._round_options.append(round_option)
+
+        self._renumber_rounds()
 
     def remove_round(self, i: int):
         self._round_options.pop(i)
