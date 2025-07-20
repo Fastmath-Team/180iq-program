@@ -42,7 +42,6 @@ class App(ttk.Window, AppInterface):
                     highlighted_question_digits=set()
                 ),
             ),
-
             Round(
                 items=[],
                 options=RoundOptions(
@@ -85,6 +84,8 @@ class App(ttk.Window, AppInterface):
             ),
         ]
 
+        self._current_index = 0
+        self._current_round_index = 0
 
         self._spin_problem_timer_handle = ''
         self._spin_answer_timer_handle = ''
@@ -156,13 +157,14 @@ class App(ttk.Window, AppInterface):
         round_frame = ttk.Frame(right_frame, padding=10, style="light.TFrame")
         round_frame.pack(fill="x", padx=10, pady=10)
 
-        ttk.Label(
+        self._round_question_label = round_question_label = ttk.Label(
             round_frame,
             text="รอบที่ 1 ข้อที่ 1",
             font=("Arial", 16),
             anchor="center",
             style="light.Inverse.TLabel",
-        ).pack(fill="x")
+        )
+        round_question_label.pack(fill="x")
 
         cnt = Countdown(
             right_frame,
@@ -198,10 +200,20 @@ class App(ttk.Window, AppInterface):
 
         action_ext_frame.columnconfigure(1, weight=1)
 
-        self._prev_btn = prev_btn = ttk.Button(action_ext_frame, text="⬅︎", style="bglight.TButton")
+        self._prev_btn = prev_btn = ttk.Button(
+            action_ext_frame,
+            text="⬅︎",
+            style="bglight.TButton",
+            command=self._on_prev_round
+        )
         prev_btn.grid(row=0, column=0, sticky="w")
 
-        self._next_btn = next_btn = ttk.Button(action_ext_frame, text="ข้อถัดไป", style="bglight.TButton")
+        self._next_btn = next_btn = ttk.Button(
+            action_ext_frame,
+            text="ข้อถัดไป",
+            style="bglight.TButton",
+            command=self._on_next_round
+        )
         next_btn.grid(row=0, column=1, sticky="ew", padx=10)
 
         self._config_btn = config_btn = ttk.Button(
@@ -255,6 +267,36 @@ class App(ttk.Window, AppInterface):
 
         self._spin_answer_timer_handle = self.after(1500, after_spin)
 
+    def _on_prev_round(self):
+        if self._current_index > 0:
+            self._current_index -= 1
+            self._calc_indexes()
+
+    def _on_next_round(self):
+        old_index = self._current_index
+
+        try:
+            self._current_index = old_index + 1
+            self._calc_indexes()
+
+        except ValueError:
+            self._current_index = old_index
+
+    def _calc_indexes(self):
+        acc = 0
+
+        for i, entry in enumerate(self._rounds):
+            options = entry.options
+            acc += options.question_count
+
+            if acc > self._current_index:
+                self._current_round_index = i
+                self._round_question_label['text'] = f"รอบที่ {self._current_round_index + 1} ข้อที่ {self._current_index + 1}"
+
+                return
+
+        raise ValueError("Could not find index")
+
     def _on_countdown_begin(self):
         self._get_question_btn['state'] = 'disabled'
         self._get_answer_btn['state'] = 'disabled'
@@ -291,6 +333,14 @@ class App(ttk.Window, AppInterface):
 
     def add_history(self, value: QuestionAnswer):
         ...
+
+    @property
+    def current_index(self):
+        return self._current_index
+
+    @property
+    def current_round_index(self):
+        return self._current_index
 
 
 if __name__ == "__main__":

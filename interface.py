@@ -37,3 +37,11 @@ class AppInterface:
 
     def add_history(self, value: QuestionAnswer):
         raise NotImplementedError()
+
+    @property
+    def current_index(self) -> int:
+        raise NotImplementedError()
+
+    @property
+    def current_round_index(self) -> int:
+        raise NotImplementedError()
