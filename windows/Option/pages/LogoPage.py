@@ -1,5 +1,5 @@
-from tkinter import filedialog
 import tkinter as tk
+from tkinter import filedialog
 
 import customtkinter as ctk
 from PIL import ImageTk
@@ -44,9 +44,7 @@ class LogoPage(ctk.CTkFrame):
             app.update_logo(filepaths)
 
         select_button = ctk.CTkButton(
-            select_logo_frame,
-            text="เลือกโลโก้",
-            command=select_images,
+            select_logo_frame, text="เลือกโลโก้", command=select_images, width=0
         )
         select_button.pack(side="right", fill="both")
 

@@ -1,9 +1,11 @@
-from tkinter import messagebox, font as tkFont
-
 import tkinter as tk
+from tkinter import font as tkFont
+from tkinter import messagebox
+
 import customtkinter as ctk
 
 from interface import AppInterface, Round
+
 
 # i know we can merge these two functions together
 def build_text(rounds: list[Round]) -> str:
@@ -25,6 +27,7 @@ def build_text(rounds: list[Round]) -> str:
             i += 1
 
     return "\n".join(s)
+
 
 def build_field(rounds: list[Round], box: tk.Text):
     i = 1
@@ -65,31 +68,30 @@ class HistoryPage(ctk.CTkFrame):
 
             messagebox.showinfo("คัดลอกสำเร็จ", "คัดลอกประวัติโจทย์เรียบร้อยแล้ว")
 
-        ctk.CTkButton(
-            top_frame,
-            text="คัดลอก",
-            command=copy_text,
-        ).pack(side="right", fill="both")
+        ctk.CTkButton(top_frame, text="คัดลอก", command=copy_text, width=0).pack(
+            side="right", fill="both"
+        )
 
         history_textbox = RichText(self, wrap="word")
         history_textbox.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
-        build_field(app.rounds, history_textbox) # type: ignore
+        build_field(app.rounds, history_textbox)  # type: ignore
 
         history_textbox.configure(state="disabled")
+
 
 # https://stackoverflow.com/a/63105641/2736814
 class RichText(ctk.CTkTextbox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        default_font = tkFont.nametofont('TkTextFont')
+        default_font = tkFont.nametofont("TkTextFont")
 
         em = default_font.measure("m")
         default_size = default_font.cget("size")
-        bold_font = tkFont.Font(**default_font.configure()) # type: ignore
-        italic_font = tkFont.Font(**default_font.configure()) # type: ignore
-        h2_font = tkFont.Font(**default_font.configure()) # type: ignore
-        h3_font = tkFont.Font(**default_font.configure()) # type: ignore
+        bold_font = tkFont.Font(**default_font.configure())  # type: ignore
+        italic_font = tkFont.Font(**default_font.configure())  # type: ignore
+        h2_font = tkFont.Font(**default_font.configure())  # type: ignore
+        h3_font = tkFont.Font(**default_font.configure())  # type: ignore
 
         bold_font.configure(weight="bold")
         italic_font.configure(slant="italic")
@@ -107,11 +109,12 @@ class RichText(ctk.CTkTextbox):
     def insert_bullet(self, index, text):
         self.insert(index, f"\u2022 {text}", "bullet")
 
-    def configure(self, cnf=None, **kw): # type: ignore
+    def configure(self, cnf=None, **kw):  # type: ignore
         if cnf is None:
             cnf = {}
 
         if "state" in cnf:
-            return self._textbox.configure(state=cnf['state'])
+            # FIXME - Recheck
+            return self._textbox.configure(state=cnf["state"])
 
-        return super().configure(cnf, **kw) # type: ignore
+        return super().configure(cnf, **kw)  # type: ignore

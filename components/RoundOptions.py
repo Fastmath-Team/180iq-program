@@ -37,7 +37,7 @@ class RoundOptionFrame(ctk.CTkFrame):
         round_label.pack(side="left", fill="both", expand=True)
 
         self._remove_btn = ctk.CTkButton(
-            title_frame, text="ลบรอบ", command=lambda: on_remove(self._index)
+            title_frame, text="ลบรอบ", command=lambda: on_remove(self._index), width=0
         )
 
         options_grid = ctk.CTkFrame(self, fg_color="transparent")

@@ -1,10 +1,11 @@
 import math
+import tkinter as tk
 from typing import Callable
 
 import customtkinter as ctk
-import ttkbootstrap as ttk
 
 TimerCallback = Callable[[], None]
+
 
 class Countdown(ctk.CTkFrame):
     def __init__(
@@ -13,17 +14,18 @@ class Countdown(ctk.CTkFrame):
         default_time=30,
         on_begin: TimerCallback | None = None,
         on_end: TimerCallback | None = None,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(master, **kwargs)
 
         self.max_seconds = default_time
         self.remaining_seconds = default_time
+        self._progress_variable = tk.DoubleVar(value=1)
 
         self._on_begin = on_begin
         self._on_end = on_end
 
-        self._tick_timer_handle = ''
+        self._tick_timer_handle = ""
 
         self._create_widgets()
 
@@ -39,31 +41,35 @@ class Countdown(ctk.CTkFrame):
         )
         time_label.grid(row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew")
 
-        self.time_progress_bar = time_progress_bar = ttk.Floodgauge(
+        self.time_progress_bar = time_progress_bar = ctk.CTkProgressBar(
             self,
-            orient="vertical",
-            maximum=self.max_seconds * 10,
-            value=math.ceil(self.remaining_seconds * 10),
-            thickness=20,
+            orientation="vertical",
+            width=20,
+            variable=self._progress_variable,
+            corner_radius=6,
         )
         time_progress_bar.grid(
             row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nsew"
         )
 
         self.button = button = ctk.CTkButton(
-            self, text="จับเวลา", command=self._toggle_timer
+            self,
+            text="จับเวลา",
+            command=self._toggle_timer,
+            font=("Arial", 16),
+            height=32,
+            width=0,
         )
         button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky="nsew")
 
     def _update_widgets(self):
         self.time_label.configure(text=str(math.ceil(self.remaining_seconds)))
-        self.time_progress_bar["value"] = math.ceil(self.remaining_seconds * 10)
+        self._progress_variable.set(self.remaining_seconds / self.max_seconds)
 
     def set_time(self, time: int):
         self._cancel_job()
 
         self.max_seconds = time
-        self.time_progress_bar["maximum"] = time * 10
 
         self._reset_timer()
 
@@ -99,7 +105,7 @@ class Countdown(ctk.CTkFrame):
     def _cancel_job(self):
         if self._tick_timer_handle:
             self.after_cancel(self._tick_timer_handle)
-            self._tick_timer_handle = ''
+            self._tick_timer_handle = ""
 
     def _tick(self):
         self.remaining_seconds = (self.remaining_seconds * 10 - 1) / 10

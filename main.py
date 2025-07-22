@@ -2,7 +2,6 @@ import random
 from typing import Literal
 
 import customtkinter as ctk
-import ttkbootstrap as ttk
 
 from components.Countdown import Countdown
 from components.Digits import Digits
@@ -10,24 +9,16 @@ from interface import AppInterface, QuestionAnswer, Round, RoundOptions
 from utils.logo import update_logo_in_frame
 from windows.Option import OptionWindow
 
-# from utils.validation import validate_positive_number
-# import ttkbootstrap.constants as tc
-# import ttkbootstrap.validation as tv
-
 ctk.set_appearance_mode("Light")
 
 
-class App(ttk.Window, AppInterface):
+class App(ctk.CTk, AppInterface):
     def __init__(self):
         super().__init__()
-
-        self.style.load_user_themes("./theme.json")
-        self.style.theme_use("nsru")
 
         self.title("โปรแกรมคิดเลขเร็ว — Fastmath")
         self.geometry("800x600")
         self.minsize(800, 600)
-        self.place_window_center()
 
         self._event_name = "โปรแกรมคิดเลขเร็ว"
         self._rounds: list[Round] = [
@@ -90,32 +81,20 @@ class App(ttk.Window, AppInterface):
         self._spin_answer_timer_handle = ""
 
         self._create_widgets()
-        # self.open_option_window()
+        # self._on_open_option_window()
 
     def _create_widgets(self):
-        # self.style.configure("TLabel", font=("Anuphan"))
-        # self.style.configure("TButton", font=("Anuphan"))
-        self.style.configure("Large.warning.TButton", font=(None, 24))
-        self.style.configure("Large.success.TButton", font=(None, 24))
-        self.style.configure("Medium.TButton", font=(None, 16))
-        self.style.configure("bglight.TButton", background="#ebf1fc")
-        self.style.configure("display.light.Inverse.TLabel", background="#fff")
-        self.style.configure("lighter.light.TFrame", background="#f9ffff")
-        self.style.configure(
-            "dark.TEntry", background="#ebf1fc", fieldbackground="#f9ffff"
-        )
+        self.grid_columnconfigure(0, weight=2)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
 
-        self.columnconfigure(0, weight=2)
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=1)
-
-        left_frame = ttk.Frame(self)
+        left_frame = ctk.CTkFrame(self, fg_color="transparent")
         left_frame.grid(row=0, column=0, sticky="nsew")
-        right_frame = ttk.Frame(self)
+        right_frame = ctk.CTkFrame(self, fg_color="transparent")
         right_frame.grid(row=0, column=1, sticky="nsew")
 
         # --- LEFT SIDE ---
-        event_title_area = ttk.Frame(left_frame)
+        event_title_area = ctk.CTkFrame(left_frame, fg_color="transparent")
         event_title_area.pack(fill="x", padx=(10, 0), pady=(10, 0))
 
         self.image_references: list[ctk.CTkImage] = []
@@ -125,15 +104,12 @@ class App(ttk.Window, AppInterface):
         )
         self._event_logo_frame.pack(side="left", fill="both")
 
-        self._event_name_label = event_name_label = ttk.Label(
-            event_title_area,
-            text=self._event_name,
-            font=("Arial", 16),
-            anchor="e",
+        self._event_name_label = event_name_label = ctk.CTkLabel(
+            event_title_area, text=self._event_name, font=("Arial", 16), anchor="e"
         )
         event_name_label.pack(side="right", fill="both", expand=True)
 
-        problem_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
+        problem_frame = ctk.CTkFrame(left_frame)
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
 
         self._problem_frame = problem_center_frame = Digits(problem_frame)
@@ -142,7 +118,7 @@ class App(ttk.Window, AppInterface):
         # TODO - สุ่ม math.random() ต่อ digit ได้เลย ไม่ต้องอ้างอิงกฎ
         problem_center_frame.set_digits([0] * 4)
 
-        answer_frame = ttk.Frame(left_frame, padding=10, style="light.TFrame")
+        answer_frame = ctk.CTkFrame(left_frame)
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
 
         self._answer_frame = answer_center_frame = Digits(answer_frame)
@@ -151,21 +127,17 @@ class App(ttk.Window, AppInterface):
         answer_center_frame.set_digits([0] * 2)
 
         # --- RIGHT SIDE ---
-        ttk.Label(right_frame, text="Powered by Fastmath.io", anchor="e").pack(
+        ctk.CTkLabel(right_frame, text="Powered by Fastmath.io", anchor="e").pack(
             fill="x", pady=(10, 8), padx=10
         )
 
-        round_frame = ttk.Frame(right_frame, padding=10, style="light.TFrame")
+        round_frame = ctk.CTkFrame(right_frame)
         round_frame.pack(fill="x", padx=10, pady=10)
 
-        self._round_question_label = round_question_label = ttk.Label(
-            round_frame,
-            text="รอบที่ 1 ข้อที่ 1",
-            font=("Arial", 16),
-            anchor="center",
-            style="light.Inverse.TLabel",
+        self._round_question_label = round_question_label = ctk.CTkLabel(
+            round_frame, text="รอบที่ 1 ข้อที่ 1", font=("Arial", 16), pady=10
         )
-        round_question_label.pack(fill="x")
+        round_question_label.pack(fill="x", padx=10)
 
         cnt = Countdown(
             right_frame,
@@ -175,53 +147,46 @@ class App(ttk.Window, AppInterface):
         )
         cnt.pack(fill="both", padx=10, expand=True)
 
-        action_frame = ttk.Frame(right_frame, padding=10, style="light.TFrame")
+        action_frame = ctk.CTkFrame(right_frame, fg_color="transparent")
         action_frame.pack(fill="x", padx=10, pady=10)
 
-        self._get_question_btn = get_question_btn = ttk.Button(
+        self._get_question_btn = get_question_btn = ctk.CTkButton(
             action_frame,
             text="สุ่มโจทย์",
-            padding=10,
-            style="Large.warning.TButton",
             command=self._on_spin_problem,
+            width=0,
+            height=48,
+            font=(None, 24),
         )
         get_question_btn.pack(fill="x")
 
-        self._get_answer_btn = get_answer_btn = ttk.Button(
+        self._get_answer_btn = get_answer_btn = ctk.CTkButton(
             action_frame,
             text="สุ่มคำตอบ",
-            padding=10,
-            style="Large.success.TButton",
             command=self._on_spin_answer,
+            width=0,
+            height=48,
+            font=(None, 24),
         )
         get_answer_btn.pack(fill="x", pady=10)
 
-        action_ext_frame = ttk.Frame(action_frame, style="light.TFrame")
+        action_ext_frame = ctk.CTkFrame(action_frame, fg_color="transparent")
         action_ext_frame.pack(fill="x")
 
         action_ext_frame.columnconfigure(1, weight=1)
 
-        self._prev_btn = prev_btn = ttk.Button(
-            action_ext_frame,
-            text="⬅︎",
-            style="bglight.TButton",
-            command=self._on_prev_round,
+        self._prev_btn = prev_btn = ctk.CTkButton(
+            action_ext_frame, text="⬅︎", command=self._on_prev_round, width=0
         )
         prev_btn.grid(row=0, column=0, sticky="w")
 
-        self._next_btn = next_btn = ttk.Button(
-            action_ext_frame,
-            text="ข้อถัดไป",
-            style="bglight.TButton",
-            command=self._on_next_round,
+        self._next_btn = next_btn = ctk.CTkButton(
+            action_ext_frame, text="ข้อถัดไป", command=self._on_next_round, width=0
         )
         next_btn.grid(row=0, column=1, sticky="ew", padx=10)
 
-        self._config_btn = config_btn = ttk.Button(
-            action_ext_frame,
-            text="⚙️",
-            style="bglight.TButton",
-            command=self._on_open_option_window,
+        self._config_btn = config_btn = ctk.CTkButton(
+            action_ext_frame, text="⚙️", command=self._on_open_option_window, width=0
         )
         config_btn.grid(row=0, column=2, sticky="e")
 
@@ -292,8 +257,8 @@ class App(ttk.Window, AppInterface):
 
             if acc > self._current_index:
                 self._current_round_index = i
-                self._round_question_label["text"] = (
-                    f"รอบที่ {self._current_round_index + 1} ข้อที่ {self._current_index + 1}"
+                self._round_question_label.configure(
+                    text=f"รอบที่ {self._current_round_index + 1} ข้อที่ {self._current_index + 1}"
                 )
 
                 return
@@ -301,18 +266,18 @@ class App(ttk.Window, AppInterface):
         raise ValueError("Could not find index")
 
     def _on_countdown_begin(self):
-        self._get_question_btn["state"] = "disabled"
-        self._get_answer_btn["state"] = "disabled"
-        self._prev_btn["state"] = "disabled"
-        self._next_btn["state"] = "disabled"
-        self._config_btn["state"] = "disabled"
+        self._get_question_btn.configure(state="disabled")
+        self._get_answer_btn.configure(state="disabled")
+        self._prev_btn.configure(state="disabled")
+        self._next_btn.configure(state="disabled")
+        self._config_btn.configure(state="disabled")
 
     def _on_countdown_end(self):
-        self._get_question_btn["state"] = "normal"
-        self._get_answer_btn["state"] = "normal"
-        self._prev_btn["state"] = "normal"
-        self._next_btn["state"] = "normal"
-        self._config_btn["state"] = "normal"
+        self._get_question_btn.configure(state="normal")
+        self._get_answer_btn.configure(state="normal")
+        self._prev_btn.configure(state="normal")
+        self._next_btn.configure(state="normal")
+        self._config_btn.configure(state="normal")
 
     def _on_open_option_window(self):
         window = OptionWindow(self)
@@ -328,7 +293,7 @@ class App(ttk.Window, AppInterface):
     @festname.setter
     def festname(self, value: str):
         self._event_name = value
-        self._event_name_label["text"] = value
+        self._event_name_label.configure(text=value)
 
     @property
     def rounds(self):

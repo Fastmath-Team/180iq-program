@@ -17,9 +17,9 @@ class RoundPage(ctk.CTkFrame):
             side="left", fill="both", expand=True
         )
 
-        ctk.CTkButton(input_frame, text="เพิ่มรอบการแข่งขัน", command=self.add_round).pack(
-            side="right", fill="both"
-        )
+        ctk.CTkButton(
+            input_frame, text="เพิ่มรอบการแข่งขัน", command=self.add_round, width=0
+        ).pack(side="right", fill="both")
 
         self._content_frame = content_frame = ctk.CTkScrollableFrame(self)
         content_frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
