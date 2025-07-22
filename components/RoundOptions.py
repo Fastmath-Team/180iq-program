@@ -3,7 +3,7 @@ from typing import Callable
 
 import customtkinter as ctk
 
-from interface import Round
+from interface import AppInterface, Round
 from styles.theme import THEME
 
 
@@ -13,11 +13,13 @@ class RoundOptionFrame(ctk.CTkFrame):
         master,
         index: int,
         round: Round,
+        app: AppInterface,
         on_remove: Callable[[int], None],
         **kwargs,
     ):
         super().__init__(master, fg_color=THEME.CTkFrame.fg_color[0], **kwargs)
 
+        self._app = app
         self._items = round.items
 
         option = round.options
@@ -61,7 +63,8 @@ class RoundOptionFrame(ctk.CTkFrame):
         #     variable=question_count,
         # ).grid(row=0, column=1, sticky="ew", padx=(5, 0), pady=5)
         # FIXME - Validate Range: 1-100
-        ctk.CTkEntry(options_grid, textvariable=question_count).grid(
+        self._question_count_entry = question_count_entry = ctk.CTkEntry(options_grid, textvariable=question_count)
+        question_count_entry.grid(
             row=0, column=1, sticky="ew", padx=(5, 0), pady=5
         )
 
@@ -112,11 +115,15 @@ class RoundOptionFrame(ctk.CTkFrame):
 
         # capture loop variables
         def on_update_highlighted_digits(i: int, check_var: tk.BooleanVar):
-            return lambda *_: (
-                option.highlighted_question_digits.add(i)
-                if check_var.get()
-                else option.highlighted_question_digits.discard(i)
-            )
+            def on(*_):
+                if check_var.get():
+                    option.highlighted_question_digits.add(i)
+                else:
+                    option.highlighted_question_digits.discard(i)
+
+                app.trigger_update_rounds('highlighted_question_digits')
+
+            return on
 
         def redraw_checkboxes():
             for i, check in enumerate(current_digits):
@@ -154,22 +161,29 @@ class RoundOptionFrame(ctk.CTkFrame):
 
             redraw_checkboxes()
 
+            app.trigger_update_rounds('question_digit')
+
         def on_answer_digit_changed(*_):
             option.answer_digit = answer_digit.get()
+
+            app.trigger_update_rounds('answer_digit')
 
         question_count.trace_add("write", on_question_count_changed)
         time_per_question.trace_add("write", on_time_per_question_changed)
         question_digit.trace_add("write", on_question_digit_changed)
         answer_digit.trace_add("write", on_answer_digit_changed)
 
-        self.set_index(index, False)
+        self.set_index(index)
 
-    def set_index(self, index: int, can_delete: bool):
+    def set_index(self, index: int):
+        can_delete = len(self._app.rounds) > 1 and len(self._items) == 0
+
         self._index = index
 
         self._round_label.configure(text=f"รอบที่ {index + 1}")
+        self._question_count_entry.configure(state="normal" if can_delete else "disabled")
 
-        if can_delete and len(self._items) == 0:
+        if can_delete:
             self._remove_btn.pack(side="right", fill="both")
         else:
             self._remove_btn.pack_forget()

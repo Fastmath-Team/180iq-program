@@ -42,6 +42,15 @@ class Digits(ctk.CTkFrame):
         for digit, label in zip(digits, self._digits):
             label.configure(text=f"{digit}")
 
+    def get_digits(self) -> list[int]:
+        return [int(label['text']) for label in self._digits]
+
+    digits = property(get_digits, set_digits)
+
+    def set_highlighted_digits(self, digits: set[int]):
+        for i, label in enumerate(self._digits):
+            label.configure(fg_color="yellow2" if i in digits else "transparent")
+
     def start_spinning(self):
         self.stop_spinning()
 

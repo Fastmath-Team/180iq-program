@@ -8,7 +8,7 @@ class RoundPage(ctk.CTkFrame):
     def __init__(self, master, app: AppInterface, **kwargs):
         super().__init__(master, **kwargs)
 
-        self._rounds = app.rounds
+        self._app = app
 
         input_frame = ctk.CTkFrame(self, fg_color="transparent")
         input_frame.pack(fill="x", padx=10, pady=10)
@@ -26,7 +26,7 @@ class RoundPage(ctk.CTkFrame):
 
         self._round_frames = rounds = [
             RoundOptionFrame(
-                content_frame, index=i, round=round, on_remove=self.remove_round
+                content_frame, index=i, round=round, app=app, on_remove=self.remove_round
             )
             for i, round in enumerate(app.rounds)
         ]
@@ -37,10 +37,8 @@ class RoundPage(ctk.CTkFrame):
         self._renumber_rounds()
 
     def _renumber_rounds(self):
-        can_delete = len(self._rounds) > 1
-
         for idx, round in enumerate(self._round_frames):
-            round.set_index(idx, can_delete)
+            round.set_index(idx)
 
     def add_round(self):
         round = Round(
@@ -58,17 +56,18 @@ class RoundPage(ctk.CTkFrame):
             self._content_frame,
             index=len(self._round_frames),
             round=round,
+            app=self._app,
             on_remove=self.remove_round,
         )
         round_frame.pack(fill="x")
 
         self._round_frames.append(round_frame)
-        self._rounds.append(round)
+        self._app.rounds.append(round)
 
         self._renumber_rounds()
 
     def remove_round(self, i: int):
-        self._rounds.pop(i)
+        self._app.rounds.pop(i)
 
         item = self._round_frames.pop(i)
         item.destroy()

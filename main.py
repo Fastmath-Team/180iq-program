@@ -126,6 +126,7 @@ class App(ctk.CTk, AppInterface):
 
         # TODO - สุ่ม math.random() ต่อ digit ได้เลย ไม่ต้องอ้างอิงกฎ
         problem_center_frame.set_digits([0] * 4)
+        problem_center_frame.set_highlighted_digits(set())
 
         answer_frame = ctk.CTkFrame(left_frame)
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
@@ -134,6 +135,7 @@ class App(ctk.CTk, AppInterface):
         answer_center_frame.pack(expand=True)
 
         answer_center_frame.set_digits([0] * 2)
+        problem_center_frame.set_highlighted_digits(set())
 
         # --- RIGHT SIDE ---
         fastmathLogo = ctk.CTkImage(
@@ -208,7 +210,7 @@ class App(ctk.CTk, AppInterface):
         if self._spin_problem_timer_handle:
             self.after_cancel(self._spin_problem_timer_handle)
 
-        digits = [random.randint(0, 9) for _ in range(4)]
+        digits = [random.randint(0, 9) for _ in range(self._rounds[self._current_round_index].options.question_digit)]
 
         def after_spin():
             self._problem_frame.stop_spinning()
@@ -222,7 +224,7 @@ class App(ctk.CTk, AppInterface):
         if self._spin_answer_timer_handle:
             self.after_cancel(self._spin_answer_timer_handle)
 
-        digits = [random.randint(0, 9) for _ in range(2)]
+        digits = [random.randint(0, 9) for _ in range(self._rounds[self._current_round_index].options.answer_digit)]
 
         def after_spin():
             self._answer_frame.stop_spinning()
@@ -239,6 +241,8 @@ class App(ctk.CTk, AppInterface):
             self._current_round_index -= 1
             self._current_index = self._rounds[self._current_round_index].options.question_count - 1
 
+            self.trigger_update_rounds('all')
+
         self._calc_indexes()
 
     def _on_next_round(self):
@@ -247,6 +251,8 @@ class App(ctk.CTk, AppInterface):
         elif self._current_round_index < len(self._rounds) - 1:
             self._current_round_index += 1
             self._current_index = 0
+
+            self.trigger_update_rounds('all')
 
         self._calc_indexes()
 
@@ -292,7 +298,21 @@ class App(ctk.CTk, AppInterface):
     def rounds(self):
         return self._rounds
 
-    def add_history(self, value: QuestionAnswer): ...
+    def trigger_update_rounds(self, which):
+        if which in ('question_digit', 'all'):
+            self._problem_frame.set_digits(
+                [0] * self._rounds[self._current_round_index].options.question_digit
+            )
+
+        if which in ('answer_digit', 'all'):
+            self._answer_frame.set_digits(
+                [0] * self._rounds[self._current_round_index].options.answer_digit
+            )
+
+        if which in ('highlighted_question_digits', 'all'):
+            self._problem_frame.set_highlighted_digits(
+                self._rounds[self._current_round_index].options.highlighted_question_digits
+            )
 
     @property
     def current_index(self):

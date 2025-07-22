@@ -35,7 +35,7 @@ class AppInterface:
     def rounds(self) -> list[Round]:
         raise NotImplementedError()
 
-    def add_history(self, value: QuestionAnswer):
+    def trigger_update_rounds(self, which: Literal['question_digit', 'answer_digit', 'highlighted_question_digits', 'all']):
         raise NotImplementedError()
 
     @property
