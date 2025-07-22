@@ -3,7 +3,6 @@ from typing import Literal
 
 import customtkinter as ctk
 import ttkbootstrap as ttk
-from PIL import ImageTk
 
 from components.Countdown import Countdown
 from components.Digits import Digits
@@ -39,7 +38,7 @@ class App(ttk.Window, AppInterface):
                     time_per_question=30,
                     question_digit=4,
                     answer_digit=2,
-                    highlighted_question_digits=set()
+                    highlighted_question_digits=set(),
                 ),
             ),
             Round(
@@ -49,17 +48,7 @@ class App(ttk.Window, AppInterface):
                     time_per_question=30,
                     question_digit=4,
                     answer_digit=2,
-                    highlighted_question_digits=set()
-                )
-            ),
-            Round(
-                items=[],
-                options=RoundOptions(
-                    question_count=10,
-                    time_per_question=30,
-                    question_digit=4,
-                    answer_digit=2,
-                    highlighted_question_digits=set()
+                    highlighted_question_digits=set(),
                 ),
             ),
             Round(
@@ -69,7 +58,7 @@ class App(ttk.Window, AppInterface):
                     time_per_question=30,
                     question_digit=4,
                     answer_digit=2,
-                    highlighted_question_digits=set()
+                    highlighted_question_digits=set(),
                 ),
             ),
             Round(
@@ -79,7 +68,17 @@ class App(ttk.Window, AppInterface):
                     time_per_question=30,
                     question_digit=4,
                     answer_digit=2,
-                    highlighted_question_digits=set()
+                    highlighted_question_digits=set(),
+                ),
+            ),
+            Round(
+                items=[],
+                options=RoundOptions(
+                    question_count=10,
+                    time_per_question=30,
+                    question_digit=4,
+                    answer_digit=2,
+                    highlighted_question_digits=set(),
                 ),
             ),
         ]
@@ -87,8 +86,8 @@ class App(ttk.Window, AppInterface):
         self._current_index = 0
         self._current_round_index = 0
 
-        self._spin_problem_timer_handle = ''
-        self._spin_answer_timer_handle = ''
+        self._spin_problem_timer_handle = ""
+        self._spin_answer_timer_handle = ""
 
         self._create_widgets()
         # self.open_option_window()
@@ -119,9 +118,11 @@ class App(ttk.Window, AppInterface):
         event_title_area = ttk.Frame(left_frame)
         event_title_area.pack(fill="x", padx=(10, 0), pady=(10, 0))
 
-        self.image_references: list[ImageTk.PhotoImage] = []
+        self.image_references: list[ctk.CTkImage] = []
 
-        self._event_logo_frame = ttk.Frame(event_title_area, style="light.TFrame")
+        self._event_logo_frame = ctk.CTkFrame(
+            event_title_area, corner_radius=0, fg_color="transparent", height=24
+        )
         self._event_logo_frame.pack(side="left", fill="both")
 
         self._event_name_label = event_name_label = ttk.Label(
@@ -170,7 +171,7 @@ class App(ttk.Window, AppInterface):
             right_frame,
             30,
             on_begin=self._on_countdown_begin,
-            on_end=self._on_countdown_end
+            on_end=self._on_countdown_end,
         )
         cnt.pack(fill="both", padx=10, expand=True)
 
@@ -204,7 +205,7 @@ class App(ttk.Window, AppInterface):
             action_ext_frame,
             text="⬅︎",
             style="bglight.TButton",
-            command=self._on_prev_round
+            command=self._on_prev_round,
         )
         prev_btn.grid(row=0, column=0, sticky="w")
 
@@ -212,7 +213,7 @@ class App(ttk.Window, AppInterface):
             action_ext_frame,
             text="ข้อถัดไป",
             style="bglight.TButton",
-            command=self._on_next_round
+            command=self._on_next_round,
         )
         next_btn.grid(row=0, column=1, sticky="ew", padx=10)
 
@@ -291,25 +292,27 @@ class App(ttk.Window, AppInterface):
 
             if acc > self._current_index:
                 self._current_round_index = i
-                self._round_question_label['text'] = f"รอบที่ {self._current_round_index + 1} ข้อที่ {self._current_index + 1}"
+                self._round_question_label["text"] = (
+                    f"รอบที่ {self._current_round_index + 1} ข้อที่ {self._current_index + 1}"
+                )
 
                 return
 
         raise ValueError("Could not find index")
 
     def _on_countdown_begin(self):
-        self._get_question_btn['state'] = 'disabled'
-        self._get_answer_btn['state'] = 'disabled'
-        self._prev_btn['state'] = 'disabled'
-        self._next_btn['state'] = 'disabled'
-        self._config_btn['state'] = 'disabled'
+        self._get_question_btn["state"] = "disabled"
+        self._get_answer_btn["state"] = "disabled"
+        self._prev_btn["state"] = "disabled"
+        self._next_btn["state"] = "disabled"
+        self._config_btn["state"] = "disabled"
 
     def _on_countdown_end(self):
-        self._get_question_btn['state'] = 'normal'
-        self._get_answer_btn['state'] = 'normal'
-        self._prev_btn['state'] = 'normal'
-        self._next_btn['state'] = 'normal'
-        self._config_btn['state'] = 'normal'
+        self._get_question_btn["state"] = "normal"
+        self._get_answer_btn["state"] = "normal"
+        self._prev_btn["state"] = "normal"
+        self._next_btn["state"] = "normal"
+        self._config_btn["state"] = "normal"
 
     def _on_open_option_window(self):
         window = OptionWindow(self)
@@ -331,8 +334,7 @@ class App(ttk.Window, AppInterface):
     def rounds(self):
         return self._rounds
 
-    def add_history(self, value: QuestionAnswer):
-        ...
+    def add_history(self, value: QuestionAnswer): ...
 
     @property
     def current_index(self):

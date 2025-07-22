@@ -1,13 +1,13 @@
 from typing import Literal
 
-import ttkbootstrap as ttk
-from PIL import Image, ImageTk
+import customtkinter as ctk
+from PIL import Image
 
 
 def update_logo_in_frame(
     filepaths: tuple[str, ...] | Literal[""],
-    frame: ttk.Frame,
-    reference: list[ImageTk.PhotoImage],
+    frame: ctk.CTkFrame,
+    reference: list[ctk.CTkImage],
     size=24,
 ):
     if not filepaths:
@@ -21,10 +21,10 @@ def update_logo_in_frame(
         try:
             img = Image.open(path)
             img.thumbnail((size, size), Image.Resampling.LANCZOS)
-            photo = ImageTk.PhotoImage(img)
+            photo = ctk.CTkImage(light_image=img, size=(size, size))
 
-            img_label = ttk.Label(frame, image=photo)
-            img_label.pack(side=ttk.LEFT, padx=(0, 10))
+            img_label = ctk.CTkLabel(frame, text="", image=photo)
+            img_label.pack(side="left", padx=(0, 10))
 
             reference.append(photo)
         except Exception as e:
