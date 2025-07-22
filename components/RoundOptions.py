@@ -156,6 +156,8 @@ class RoundOptionFrame(ctk.CTkFrame):
         def on_time_per_question_changed(*_):
             option.time_per_question = time_per_question.get()
 
+            app.trigger_update_rounds('timer')
+
         def on_question_digit_changed(*_):
             option.question_digit = question_digit.get()
 

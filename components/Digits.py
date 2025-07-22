@@ -17,7 +17,7 @@ class Digits(ctk.CTkFrame):
 
         self._spinning_timer_handle: str = ""
 
-    def set_digits(self, digits: list[int]):
+    def set_digits(self, digits: list[str]):
         diff = len(digits) - len(self._digits)
 
         if diff > 0:
@@ -42,8 +42,8 @@ class Digits(ctk.CTkFrame):
         for digit, label in zip(digits, self._digits):
             label.configure(text=f"{digit}")
 
-    def get_digits(self) -> list[int]:
-        return [int(label['text']) for label in self._digits]
+    def get_digits(self) -> list[str]:
+        return [label.cget("text") for label in self._digits]
 
     digits = property(get_digits, set_digits)
 

@@ -11,8 +11,8 @@ class RoundOptions:
 
 @dataclass(frozen=True)
 class QuestionAnswer:
-    question: list[int]
-    answer: int
+    question: list[str]
+    answer: list[str]
 
 @dataclass(frozen=True)
 class Round:
@@ -35,7 +35,7 @@ class AppInterface:
     def rounds(self) -> list[Round]:
         raise NotImplementedError()
 
-    def trigger_update_rounds(self, which: Literal['question_digit', 'answer_digit', 'highlighted_question_digits', 'all']):
+    def trigger_update_rounds(self, which: Literal['question_digit', 'answer_digit', 'highlighted_question_digits', 'timer', 'all']):
         raise NotImplementedError()
 
     @property

@@ -43,8 +43,10 @@ def build_field(rounds: list[Round], box: tk.Text):
             continue
 
         for hist in round.items:
-            q = " ".join(map(str, hist.question))
-            box.insert("end", f"{i}: {q} -> {hist.answer}\n")
+            q = " ".join(hist.question)
+            a = "".join(hist.answer)
+
+            box.insert("end", f"{i}: {q} -> {a}\n")
 
             i += 1
 

@@ -125,7 +125,7 @@ class App(ctk.CTk, AppInterface):
         problem_center_frame.pack(expand=True)
 
         # TODO - สุ่ม math.random() ต่อ digit ได้เลย ไม่ต้องอ้างอิงกฎ
-        problem_center_frame.set_digits([0] * 4)
+        problem_center_frame.set_digits(['-'] * 4)
         problem_center_frame.set_highlighted_digits(set())
 
         answer_frame = ctk.CTkFrame(left_frame)
@@ -134,7 +134,7 @@ class App(ctk.CTk, AppInterface):
         self._answer_frame = answer_center_frame = Digits(answer_frame)
         answer_center_frame.pack(expand=True)
 
-        answer_center_frame.set_digits([0] * 2)
+        answer_center_frame.set_digits(['-'] * 2)
         problem_center_frame.set_highlighted_digits(set())
 
         # --- RIGHT SIDE ---
@@ -153,7 +153,7 @@ class App(ctk.CTk, AppInterface):
         )
         round_question_label.pack(fill="x", padx=10)
 
-        cnt = Countdown(
+        self._cnt = cnt = Countdown(
             right_frame,
             21,
             on_begin=self._on_countdown_begin,
@@ -210,13 +210,15 @@ class App(ctk.CTk, AppInterface):
         if self._spin_problem_timer_handle:
             self.after_cancel(self._spin_problem_timer_handle)
 
-        digits = [random.randint(0, 9) for _ in range(self._rounds[self._current_round_index].options.question_digit)]
+        digits = [str(random.randint(0, 9)) for _ in range(self._rounds[self._current_round_index].options.question_digit)]
 
         def after_spin():
             self._problem_frame.stop_spinning()
             self._problem_frame.set_digits(digits)
+            self._next_btn.configure(state="normal")
 
         self._problem_frame.start_spinning()
+        self._next_btn.configure(state="disabled")
 
         self._spin_problem_timer_handle = self.after(1500, after_spin)
 
@@ -224,13 +226,15 @@ class App(ctk.CTk, AppInterface):
         if self._spin_answer_timer_handle:
             self.after_cancel(self._spin_answer_timer_handle)
 
-        digits = [random.randint(0, 9) for _ in range(self._rounds[self._current_round_index].options.answer_digit)]
+        digits = [str(random.randint(0, 9)) for _ in range(self._rounds[self._current_round_index].options.answer_digit)]
 
         def after_spin():
             self._answer_frame.stop_spinning()
             self._answer_frame.set_digits(digits)
+            self._next_btn.configure(state="normal")
 
         self._answer_frame.start_spinning()
+        self._next_btn.configure(state="disabled")
 
         self._spin_answer_timer_handle = self.after(1500, after_spin)
 
@@ -246,13 +250,15 @@ class App(ctk.CTk, AppInterface):
         self._calc_indexes()
 
     def _on_next_round(self):
+        self._rounds[self._current_round_index].items.append(QuestionAnswer(self._problem_frame.get_digits(), self._answer_frame.get_digits()))
+
         if self._current_index < self._rounds[self._current_round_index].options.question_count - 1:
             self._current_index += 1
         elif self._current_round_index < len(self._rounds) - 1:
             self._current_round_index += 1
             self._current_index = 0
 
-            self.trigger_update_rounds('all')
+        self.trigger_update_rounds('all')
 
         self._calc_indexes()
 
@@ -301,18 +307,21 @@ class App(ctk.CTk, AppInterface):
     def trigger_update_rounds(self, which):
         if which in ('question_digit', 'all'):
             self._problem_frame.set_digits(
-                [0] * self._rounds[self._current_round_index].options.question_digit
+                ['-'] * self._rounds[self._current_round_index].options.question_digit
             )
 
         if which in ('answer_digit', 'all'):
             self._answer_frame.set_digits(
-                [0] * self._rounds[self._current_round_index].options.answer_digit
+                ['-'] * self._rounds[self._current_round_index].options.answer_digit
             )
 
         if which in ('highlighted_question_digits', 'all'):
             self._problem_frame.set_highlighted_digits(
                 self._rounds[self._current_round_index].options.highlighted_question_digits
             )
+
+        if which in ('timer', 'all'):
+            self._cnt.set_time(self._rounds[self._current_round_index].options.time_per_question)
 
     @property
     def current_index(self):
