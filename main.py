@@ -235,34 +235,26 @@ class App(ctk.CTk, AppInterface):
     def _on_prev_round(self):
         if self._current_index > 0:
             self._current_index -= 1
-            self._calc_indexes()
+        elif self._current_round_index > 0:
+            self._current_round_index -= 1
+            self._current_index = self._rounds[self._current_round_index].options.question_count - 1
+
+        self._calc_indexes()
 
     def _on_next_round(self):
-        old_index = self._current_index
+        if self._current_index < self._rounds[self._current_round_index].options.question_count - 1:
+            self._current_index += 1
+        elif self._current_round_index < len(self._rounds) - 1:
+            self._current_round_index += 1
+            self._current_index = 0
 
-        try:
-            self._current_index = old_index + 1
-            self._calc_indexes()
-
-        except ValueError:
-            self._current_index = old_index
+        self._calc_indexes()
 
     def _calc_indexes(self):
-        acc = 0
-
-        for i, entry in enumerate(self._rounds):
-            options = entry.options
-            acc += options.question_count
-
-            if acc > self._current_index:
-                self._current_round_index = i
-                self._round_question_label.configure(
-                    text=f"รอบที่ {self._current_round_index + 1} ข้อที่ {self._current_index + 1}"
-                )
-
-                return
-
-        raise ValueError("Could not find index")
+        base = sum((entry.options.question_count for entry in self._rounds[:self._current_round_index]))
+        self._round_question_label.configure(
+            text=f"รอบที่ {self._current_round_index + 1} ข้อที่ {base + self._current_index + 1}"
+        )
 
     def _on_countdown_begin(self):
         self._get_question_btn.configure(state="disabled")
@@ -308,7 +300,7 @@ class App(ctk.CTk, AppInterface):
 
     @property
     def current_round_index(self):
-        return self._current_index
+        return self._current_round_index
 
 
 if __name__ == "__main__":
