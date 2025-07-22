@@ -6,9 +6,10 @@ from PIL import Image
 
 def update_logo_in_frame(
     filepaths: tuple[str, ...] | Literal[""],
-    frame: ctk.CTkFrame,
+    frame: ctk.CTkFrame | ctk.CTkScrollableFrame,
     reference: list[ctk.CTkImage],
     size=24,
+    padx=(0, 10),
 ):
     if not filepaths:
         return
@@ -19,12 +20,10 @@ def update_logo_in_frame(
 
     for path in filepaths:
         try:
-            img = Image.open(path)
-            img.thumbnail((size, size), Image.Resampling.LANCZOS)
-            photo = ctk.CTkImage(light_image=img, size=(size, size))
+            photo = ctk.CTkImage(light_image=Image.open(path), size=(size, size))
 
             img_label = ctk.CTkLabel(frame, text="", image=photo)
-            img_label.pack(side="left", padx=(0, 10))
+            img_label.pack(side="left", padx=padx)
 
             reference.append(photo)
         except Exception as e:

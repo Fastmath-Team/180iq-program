@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import filedialog
 
 import customtkinter as ctk
-from PIL import ImageTk
 
 from interface import AppInterface
 from utils.logo import update_logo_in_frame
@@ -48,7 +47,7 @@ class LogoPage(ctk.CTkFrame):
         )
         select_button.pack(side="right", fill="both")
 
-        self.image_references: list[ImageTk.PhotoImage] = []
+        self.image_references: list[ctk.CTkImage] = []
 
         self.logo_frame = ctk.CTkScrollableFrame(
             self, orientation="horizontal", height=72

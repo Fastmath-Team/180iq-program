@@ -2,10 +2,13 @@ import random
 from typing import Literal
 
 import customtkinter as ctk
+from PIL import Image
 
 from components.Countdown import Countdown
 from components.Digits import Digits
 from interface import AppInterface, QuestionAnswer, Round, RoundOptions
+from styles.buttons import BUTTON_GREEN_STYLES, BUTTON_ORANGE_STYLES
+from utils.file import get_file
 from utils.logo import update_logo_in_frame
 from windows.Option import OptionWindow
 
@@ -14,7 +17,7 @@ ctk.set_appearance_mode("Light")
 
 class App(ctk.CTk, AppInterface):
     def __init__(self):
-        super().__init__()
+        super().__init__(fg_color="#1A4677")
 
         self.title("โปรแกรมคิดเลขเร็ว — Fastmath")
         self.geometry("800x600")
@@ -99,15 +102,19 @@ class App(ctk.CTk, AppInterface):
 
         self.image_references: list[ctk.CTkImage] = []
 
+        self._event_name_label = event_name_label = ctk.CTkLabel(
+            event_title_area,
+            text=self._event_name,
+            font=("Arial", 16),
+            anchor="w",
+            text_color="#F5FCFF",
+        )
+        event_name_label.pack(side="left", fill="both", expand=True)
+
         self._event_logo_frame = ctk.CTkFrame(
             event_title_area, corner_radius=0, fg_color="transparent", height=24
         )
-        self._event_logo_frame.pack(side="left", fill="both")
-
-        self._event_name_label = event_name_label = ctk.CTkLabel(
-            event_title_area, text=self._event_name, font=("Arial", 16), anchor="e"
-        )
-        event_name_label.pack(side="right", fill="both", expand=True)
+        self._event_logo_frame.pack(side="right", fill="both")
 
         problem_frame = ctk.CTkFrame(left_frame)
         problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
@@ -127,8 +134,11 @@ class App(ctk.CTk, AppInterface):
         answer_center_frame.set_digits([0] * 2)
 
         # --- RIGHT SIDE ---
-        ctk.CTkLabel(right_frame, text="Powered by Fastmath.io", anchor="e").pack(
-            fill="x", pady=(10, 8), padx=10
+        fastmathLogo = ctk.CTkImage(
+            light_image=Image.open(get_file("assets/logo.png")), size=(145, 24)
+        )
+        ctk.CTkLabel(right_frame, text="", anchor="e", image=fastmathLogo).pack(
+            fill="x", pady=(10, 0), padx=10
         )
 
         round_frame = ctk.CTkFrame(right_frame)
@@ -155,8 +165,9 @@ class App(ctk.CTk, AppInterface):
             text="สุ่มโจทย์",
             command=self._on_spin_problem,
             width=0,
-            height=48,
+            height=56,
             font=(None, 24),
+            **BUTTON_ORANGE_STYLES,
         )
         get_question_btn.pack(fill="x")
 
@@ -165,8 +176,9 @@ class App(ctk.CTk, AppInterface):
             text="สุ่มคำตอบ",
             command=self._on_spin_answer,
             width=0,
-            height=48,
+            height=56,
             font=(None, 24),
+            **BUTTON_GREEN_STYLES,
         )
         get_answer_btn.pack(fill="x", pady=10)
 
@@ -284,7 +296,9 @@ class App(ctk.CTk, AppInterface):
         window.grab_set()
 
     def update_logo(self, filepaths: tuple[str, ...] | Literal[""]):
-        update_logo_in_frame(filepaths, self._event_logo_frame, self.image_references)
+        update_logo_in_frame(
+            filepaths, self._event_logo_frame, self.image_references, padx=(10, 0)
+        )
 
     @property
     def festname(self) -> str:

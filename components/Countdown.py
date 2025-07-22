@@ -4,6 +4,9 @@ from typing import Callable
 
 import customtkinter as ctk
 
+from styles.buttons import BUTTON_YELLOW_STYLES
+from styles.progress import PROGRESS_YELLOW_STYLES
+
 TimerCallback = Callable[[], None]
 
 
@@ -46,7 +49,7 @@ class Countdown(ctk.CTkFrame):
             orientation="vertical",
             width=20,
             variable=self._progress_variable,
-            corner_radius=6,
+            **PROGRESS_YELLOW_STYLES,
         )
         time_progress_bar.grid(
             row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nsew"
@@ -59,6 +62,7 @@ class Countdown(ctk.CTkFrame):
             font=("Arial", 16),
             height=32,
             width=0,
+            **BUTTON_YELLOW_STYLES,
         )
         button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky="nsew")
 

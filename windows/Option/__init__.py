@@ -3,26 +3,10 @@ from typing import Optional
 import customtkinter as ctk
 
 from interface import AppInterface
+from styles.buttons import BUTTON_DEFAULT_STYLES, BUTTON_OUTLINE_STYLES
 from windows.Option.pages.HistoryPage import HistoryPage
 from windows.Option.pages.LogoPage import LogoPage
 from windows.Option.pages.RoundPage import RoundPage
-
-# FIXME - import from theme
-BUTTON_DEFAULT_STYLES = {
-    "fg_color": ("#3a7ebf", "#1f538d"),
-    "hover_color": ("#325882", "#14375e"),
-    "border_color": ("#3E454A", "#949A9F"),
-    "border_width": 0,
-    "text_color": ("#DCE4EE", "#DCE4EE"),
-}
-
-BUTTON_OUTLINE_STYLES = {
-    "fg_color": "transparent",
-    "hover_color": ("gray80", "gray28"),
-    "border_color": ("#3a7ebf", "#1f538d"),
-    "border_width": 2,
-    "text_color": ("#3a7ebf", "#1f538d"),
-}
 
 
 class OptionWindow(ctk.CTkToplevel):
