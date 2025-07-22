@@ -204,21 +204,6 @@ class App(ctk.CTk, AppInterface):
         )
         config_btn.grid(row=0, column=2, sticky="e")
 
-        # countdown_seconds = ttk.StringVar(value="30")
-
-        # spin = ttk.Spinbox(left_frame, textvariable=countdown_seconds, from_=1, to=60)
-        # spin.pack()
-        # tv.add_validation(spin, validate_positive_number, "key")
-
-        # def handle_spin(*args):
-        #     if x := countdown_seconds.get():
-        #         try:
-        #             cnt.set_time(int(x))
-        #         except ValueError:
-        #             pass
-
-        # countdown_seconds.trace_add("write", handle_spin)
-
     def _on_spin_problem(self):
         if self._spin_problem_timer_handle:
             self.after_cancel(self._spin_problem_timer_handle)
