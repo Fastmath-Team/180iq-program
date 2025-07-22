@@ -1,26 +1,27 @@
 import random
-import ttkbootstrap as ttk
 
-class Digits(ttk.Frame):
+import customtkinter as ctk
+
+
+class Digits(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs, style='light.TFrame')
+        super().__init__(master, **kwargs)
 
-        self._digits: list[ttk.Label] = []
+        self._digits: list[ctk.CTkLabel] = []
 
-        self._spinning_timer_handle: str = ''
+        self._spinning_timer_handle: str = ""
 
     def set_digits(self, digits: list[int]):
         diff = len(digits) - len(self._digits)
 
         if diff > 0:
             for i in range(diff):
-                label = ttk.Label(
+                label = ctk.CTkLabel(
                     self,
                     text="0",
                     font=("Arial", 108, "bold"),
                     anchor="center",
-                    style="display.light.Inverse.TLabel",
-                    padding=(10, -10, 10, -10),
+                    padx=10,
                 )
 
                 label.grid(row=0, column=len(self._digits))
@@ -33,7 +34,7 @@ class Digits(ttk.Frame):
                 label.destroy()
 
         for digit, label in zip(digits, self._digits):
-            label['text'] = f'{digit}'
+            label.configure(text=f"{digit}")
 
     def start_spinning(self):
         self.stop_spinning()
@@ -46,6 +47,6 @@ class Digits(ttk.Frame):
 
     def _spin(self):
         for label in self._digits:
-            label['text'] = random.choice('0123456789')
+            label.configure(text=random.choice("0123456789"))
 
         self._spinning_timer_handle = self.after(50, self._spin)
