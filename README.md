@@ -7,7 +7,7 @@
 1. ลง library ที่ต้องใช้ โดยการใช้คำสั่ง
 
 ```bash
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 > แนะนำให้ทำ env ก่อน เพื่อไม่ให้ library ไปรวมกับ library ส่วนรวม
