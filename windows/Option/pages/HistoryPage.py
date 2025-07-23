@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import font as tkFont
 from tkinter import messagebox
 
 import customtkinter as ctk

@@ -3,7 +3,7 @@ from typing import Callable
 
 import customtkinter as ctk
 
-from styles.colors import COLORS
+from styles import colors as COLORS
 from styles.progress import (
     PROGRESS_EMPTY_STYLES,
     PROGRESS_ORANGE_STYLES,
@@ -16,11 +16,11 @@ TimerCallback = Callable[[], None]
 
 def get_time_label_color(ratio: float):
     if ratio > 2 / 3:
-        return COLORS["YELLOW"]
+        return COLORS.Yellow
     elif ratio > 1 / 3:
-        return COLORS["ORANGE"]
+        return COLORS.Orange
     else:
-        return COLORS["RED"]
+        return COLORS.Red
 
 
 def get_progress_bar_color(ratio: float):

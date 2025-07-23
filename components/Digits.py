@@ -3,7 +3,7 @@ from typing import Literal
 
 import customtkinter as ctk
 
-from styles.colors import COLORS
+from styles import colors as COLORS
 from styles.theme import THEME
 
 
@@ -37,7 +37,7 @@ class Digit(ctk.CTkFrame):
 
     def set_highlight(self, highlight: bool):
         self._label.configure(
-            text_color=COLORS["GREEN"] if highlight else THEME.CTkLabel.text_color[0]
+            text_color=COLORS.Green if highlight else THEME.CTkLabel.text_color[0]
         )
 
 
