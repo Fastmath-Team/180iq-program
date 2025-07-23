@@ -66,7 +66,7 @@ class Digits(ctk.CTkFrame):
                 label.grid(
                     row=0,
                     column=len(self._digits),
-                    padx=10 if self._mode == "full" else 10,
+                    padx=5,
                 )
 
                 self._digits.append(label)
