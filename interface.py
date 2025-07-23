@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Literal
 
+
 @dataclass
 class RoundOptions:
     question_count: int
@@ -9,18 +10,25 @@ class RoundOptions:
     answer_digit: int | Literal[2, 3]
     highlighted_question_digits: set[int]
 
+
 @dataclass(frozen=True)
 class QuestionAnswer:
     question: list[str]
     answer: list[str]
+
 
 @dataclass(frozen=True)
 class Round:
     items: list[QuestionAnswer]
     options: RoundOptions
 
+
 class AppInterface:
     def update_logo(self, filepaths: tuple[str, ...] | Literal[""]):
+        raise NotImplementedError()
+
+    @property
+    def version(self) -> str:
         raise NotImplementedError()
 
     @property
@@ -35,7 +43,16 @@ class AppInterface:
     def rounds(self) -> list[Round]:
         raise NotImplementedError()
 
-    def trigger_update_rounds(self, which: Literal['question_digit', 'answer_digit', 'highlighted_question_digits', 'timer', 'all']):
+    def trigger_update_rounds(
+        self,
+        which: Literal[
+            "question_digit",
+            "answer_digit",
+            "highlighted_question_digits",
+            "timer",
+            "all",
+        ],
+    ):
         raise NotImplementedError()
 
     @property

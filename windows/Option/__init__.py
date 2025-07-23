@@ -56,8 +56,12 @@ class OptionWindow(ctk.CTkToplevel):
         )
         history_page_btn.pack(fill="x", padx=10)
 
+        ctk.CTkLabel(left_frame, text=f"เวอร์ชัน {self.app.version}").pack(
+            expand=True, anchor="s", padx=10
+        )
+
         ctk.CTkButton(left_frame, text="ปิด", command=self.destroy).pack(
-            fill="x", expand=True, anchor="s", padx=10, pady=10
+            fill="x", anchor="s", padx=10, pady=(5, 10)
         )
 
         self._current_page: Optional[str] = None

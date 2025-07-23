@@ -15,6 +15,8 @@ from windows.Option import OptionWindow
 ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme("./styles/theme.json")
 
+VERSION = "1.0.0"
+
 
 class App(ctk.CTk, AppInterface):
     def __init__(self):
@@ -303,6 +305,10 @@ class App(ctk.CTk, AppInterface):
         update_logo_in_frame(
             filepaths, self._event_logo_frame, self.image_references, padx=(10, 0)
         )
+
+    @property
+    def version(self):
+        return VERSION
 
     @property
     def festname(self) -> str:
