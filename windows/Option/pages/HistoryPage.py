@@ -5,23 +5,6 @@ import customtkinter as ctk
 
 from interface import AppInterface, Round
 
-"""
-    NOTE
-    1. เอา "ประวัติโจทย์" ข้างใน Rich Text ออก
-    2. เพิ่มกติกาของแต่ละรอบ (เวลา+เน้นตัวไหน)
-    3. ประวัติไม่ทับ แต่ต้องขึ้นข้
-
-        > 1
-        > 1234 - 56
-        > -> 2
-        > <- 1
-        > 7777 - 12
-        >
-        > 1. 1234 - 56
-        > 1. 7777 - 12
-"""
-
-
 # i know we can merge these two functions together
 def build_text(rounds: list[Round]) -> str:
     s = []
