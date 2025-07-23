@@ -3,7 +3,7 @@ from typing import Optional
 import customtkinter as ctk
 
 from interface import AppInterface
-from styles.buttons import BUTTON_DEFAULT_STYLES, BUTTON_OUTLINE_STYLES
+from styles.buttons import BUTTON_DEFAULT_STYLES, BUTTON_FILLED_STYLES
 from windows.Option.pages.HistoryPage import HistoryPage
 from windows.Option.pages.LogoPage import LogoPage
 from windows.Option.pages.RoundPage import RoundPage
@@ -39,29 +39,26 @@ class OptionWindow(ctk.CTkToplevel):
         )
 
         round_page_btn = ctk.CTkButton(
-            left_frame, text="รอบและโจทย์", command=lambda: self._show_page("round")
+            left_frame,
+            text="รอบและโจทย์",
+            command=lambda: self._show_page("round"),
+            **BUTTON_FILLED_STYLES,
         )
         round_page_btn.pack(fill="x", padx=10)
 
         logo_page_btn = ctk.CTkButton(
-            left_frame,
-            text="ข้อมูลงานแข่งขัน",
-            **BUTTON_OUTLINE_STYLES,
-            command=lambda: self._show_page("logo"),
+            left_frame, text="ข้อมูลงานแข่งขัน", command=lambda: self._show_page("logo")
         )
         logo_page_btn.pack(fill="x", pady=10, padx=10)
 
         history_page_btn = ctk.CTkButton(
-            left_frame,
-            text="ประวัติโจทย์",
-            **BUTTON_OUTLINE_STYLES,
-            command=lambda: self._show_page("history"),
+            left_frame, text="ประวัติโจทย์", command=lambda: self._show_page("history")
         )
         history_page_btn.pack(fill="x", padx=10)
 
-        ctk.CTkButton(
-            left_frame, text="ปิด", **BUTTON_OUTLINE_STYLES, command=self.destroy
-        ).pack(fill="x", expand=True, anchor="s", padx=10, pady=10)
+        ctk.CTkButton(left_frame, text="ปิด", command=self.destroy).pack(
+            fill="x", expand=True, anchor="s", padx=10, pady=10
+        )
 
         self._current_page: Optional[str] = None
         self._pages: dict[str, tuple[ctk.CTkButton, ctk.CTkFrame]] = {
@@ -77,11 +74,11 @@ class OptionWindow(ctk.CTkToplevel):
             frame_btn, frame = self._pages[self._current_page]
 
             frame.pack_forget()
-            frame_btn.configure(**BUTTON_OUTLINE_STYLES)
+            frame_btn.configure(**BUTTON_DEFAULT_STYLES)
 
         frame_btn, frame = self._pages[page]
 
         frame.pack(fill="both", expand=True)
-        frame_btn.configure(**BUTTON_DEFAULT_STYLES)
+        frame_btn.configure(**BUTTON_FILLED_STYLES)
 
         self._current_page = page

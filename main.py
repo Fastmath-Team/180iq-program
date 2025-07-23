@@ -8,16 +8,18 @@ from components.Countdown import Countdown
 from components.Digits import Digits
 from interface import AppInterface, QuestionAnswer, Round, RoundOptions
 from styles.buttons import BUTTON_GREEN_STYLES, BUTTON_ORANGE_STYLES
+from styles.theme import THEME
 from utils.file import get_file
 from utils.logo import update_logo_in_frame
 from windows.Option import OptionWindow
 
 ctk.set_appearance_mode("Light")
+ctk.set_default_color_theme("./styles/theme.json")
 
 
 class App(ctk.CTk, AppInterface):
     def __init__(self):
-        super().__init__(fg_color="#1A4677")
+        super().__init__()
 
         self.title("โปรแกรมคิดเลขเร็ว — Fastmath")
         self.geometry("800x600")
@@ -107,7 +109,7 @@ class App(ctk.CTk, AppInterface):
             text=self._event_name,
             font=("Arial", 16),
             anchor="w",
-            text_color="#F5FCFF",
+            text_color=THEME.CTkFrame.fg_color[0],
         )
         event_name_label.pack(side="left", fill="both", expand=True)
 
@@ -151,7 +153,7 @@ class App(ctk.CTk, AppInterface):
 
         cnt = Countdown(
             right_frame,
-            30,
+            21,
             on_begin=self._on_countdown_begin,
             on_end=self._on_countdown_end,
         )

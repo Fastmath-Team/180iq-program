@@ -4,6 +4,7 @@ from typing import Callable
 import customtkinter as ctk
 
 from interface import Round
+from styles.theme import THEME
 
 
 class RoundOptionFrame(ctk.CTkFrame):
@@ -15,7 +16,7 @@ class RoundOptionFrame(ctk.CTkFrame):
         on_remove: Callable[[int], None],
         **kwargs,
     ):
-        super().__init__(master, fg_color="gray90", **kwargs)
+        super().__init__(master, fg_color=THEME.CTkFrame.fg_color[0], **kwargs)
 
         self._items = round.items
 

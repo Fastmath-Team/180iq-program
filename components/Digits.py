@@ -5,7 +5,13 @@ import customtkinter as ctk
 
 class Digits(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
+        super().__init__(
+            master,
+            fg_color="transparent",
+            border_color="gray10",
+            border_width=1,
+            **kwargs,
+        )
 
         self._digits: list[ctk.CTkLabel] = []
 
@@ -24,7 +30,7 @@ class Digits(ctk.CTkFrame):
                     padx=10,
                 )
 
-                label.grid(row=0, column=len(self._digits))
+                label.grid(row=0, column=len(self._digits), padx=10)
 
                 self._digits.append(label)
 

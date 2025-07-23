@@ -5,9 +5,32 @@ from typing import Callable
 import customtkinter as ctk
 
 from styles.buttons import BUTTON_YELLOW_STYLES
-from styles.progress import PROGRESS_YELLOW_STYLES
+from styles.colors import COLORS
+from styles.progress import (
+    PROGRESS_ORANGE_STYLES,
+    PROGRESS_RED_STYLES,
+    PROGRESS_YELLOW_STYLES,
+)
 
 TimerCallback = Callable[[], None]
+
+
+def get_time_label_color(seconds):
+    if seconds > 20:
+        return COLORS["YELLOW_TEXT"]
+    elif seconds > 10:
+        return COLORS["ORANGE"]
+    else:
+        return COLORS["RED"]
+
+
+def get_progress_bar_color(seconds):
+    if seconds > 20:
+        return PROGRESS_YELLOW_STYLES
+    elif seconds > 10:
+        return PROGRESS_ORANGE_STYLES
+    else:
+        return PROGRESS_RED_STYLES
 
 
 class Countdown(ctk.CTkFrame):
@@ -41,6 +64,7 @@ class Countdown(ctk.CTkFrame):
             font=("Arial", 80, "bold"),
             text=str(self.remaining_seconds),
             anchor="center",
+            text_color=get_time_label_color(self.remaining_seconds),
         )
         time_label.grid(row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew")
 
@@ -49,7 +73,7 @@ class Countdown(ctk.CTkFrame):
             orientation="vertical",
             width=20,
             variable=self._progress_variable,
-            **PROGRESS_YELLOW_STYLES,
+            **get_progress_bar_color(self.remaining_seconds),
         )
         time_progress_bar.grid(
             row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nsew"
@@ -67,7 +91,11 @@ class Countdown(ctk.CTkFrame):
         button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky="nsew")
 
     def _update_widgets(self):
-        self.time_label.configure(text=str(math.ceil(self.remaining_seconds)))
+        time_left = math.ceil(self.remaining_seconds)
+        self.time_label.configure(
+            text=str(time_left), text_color=get_time_label_color(time_left)
+        )
+        self.time_progress_bar.configure(**get_progress_bar_color(time_left))
         self._progress_variable.set(self.remaining_seconds / self.max_seconds)
 
     def set_time(self, time: int):
