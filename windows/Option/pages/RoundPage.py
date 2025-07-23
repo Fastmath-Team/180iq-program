@@ -13,9 +13,9 @@ class RoundPage(ctk.CTkFrame):
         input_frame = ctk.CTkFrame(self, fg_color="transparent")
         input_frame.pack(fill="x", padx=10, pady=10)
 
-        ctk.CTkLabel(input_frame, text="รอบการแข่งขัน", anchor="w").pack(
-            side="left", fill="both", expand=True
-        )
+        ctk.CTkLabel(
+            input_frame, text="รอบการแข่งขัน", font=(None, 16, "bold"), anchor="w"
+        ).pack(side="left", fill="both", expand=True)
 
         ctk.CTkButton(
             input_frame, text="เพิ่มรอบการแข่งขัน", command=self.add_round, width=0
@@ -26,7 +26,11 @@ class RoundPage(ctk.CTkFrame):
 
         self._round_frames = rounds = [
             RoundOptionFrame(
-                content_frame, index=i, round=round, app=app, on_remove=self.remove_round
+                content_frame,
+                index=i,
+                round=round,
+                app=app,
+                on_remove=self.remove_round,
             )
             for i, round in enumerate(app.rounds)
         ]
@@ -59,7 +63,7 @@ class RoundPage(ctk.CTkFrame):
             app=self._app,
             on_remove=self.remove_round,
         )
-        round_frame.pack(fill="x")
+        round_frame.pack(fill="x", padx=(5, 0), pady=5)
 
         self._round_frames.append(round_frame)
         self._app.rounds.append(round)
@@ -73,3 +77,5 @@ class RoundPage(ctk.CTkFrame):
         item.destroy()
 
         self._renumber_rounds()
+
+        self._app.trigger_update_rounds("all")

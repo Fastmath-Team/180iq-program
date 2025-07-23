@@ -32,3 +32,11 @@ PROGRESS_RED_STYLES: ProgressStylesDict = {
     "progress_color": ("#dc2626", "#1f538d"),
     "border_color": ("gray", "gray"),
 }
+
+PROGRESS_EMPTY_STYLES: ProgressStylesDict = {
+    "corner_radius": 6,
+    "border_width": 0,
+    "fg_color": ("#FF9184", "#4A4D50"),
+    "progress_color": ("#FF9184", "#1f538d"),
+    "border_color": ("gray", "gray"),
+}

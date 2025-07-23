@@ -36,7 +36,9 @@ class RoundOptionFrame(ctk.CTkFrame):
         title_frame = ctk.CTkFrame(self, fg_color="transparent")
         title_frame.pack(fill="x", padx=10, pady=(10, 0))
 
-        self._round_label = round_label = ctk.CTkLabel(title_frame, text="", anchor="w")
+        self._round_label = round_label = ctk.CTkLabel(
+            title_frame, text="", font=(None, 12, "bold"), anchor="w"
+        )
         round_label.pack(side="left", fill="both", expand=True)
 
         self._remove_btn = ctk.CTkButton(
@@ -54,35 +56,18 @@ class RoundOptionFrame(ctk.CTkFrame):
         ctk.CTkLabel(options_grid, text="จำนวนข้อ").grid(
             row=0, column=0, sticky="e", padx=(5, 0), pady=5
         )
-        # ttk.Spinbox(options_grid, from_=1, to=100, textvariable=question_count).grid(
-        #     row=0, column=1, sticky="ew", padx=(5, 0), pady=5
-        # )
-        # ctk.CTkComboBox(
-        #     options_grid,
-        #     values=[str(x) for x in range(1, 101)],
-        #     variable=question_count,
-        # ).grid(row=0, column=1, sticky="ew", padx=(5, 0), pady=5)
-        # FIXME - Validate Range: 1-100
-        self._question_count_entry = question_count_entry = ctk.CTkEntry(options_grid, textvariable=question_count)
-        question_count_entry.grid(
-            row=0, column=1, sticky="ew", padx=(5, 0), pady=5
+        self._question_count_entry = question_count_entry = ctk.CTkEntry(
+            options_grid, textvariable=question_count
         )
+        question_count_entry.grid(row=0, column=1, sticky="ew", padx=(5, 0), pady=5)
 
         ctk.CTkLabel(options_grid, text="ระยะเวลา (วินาที)").grid(
             row=0, column=2, sticky="e", padx=(5, 0), pady=5
         )
-        # ttk.Spinbox(options_grid, from_=10, to=60, textvariable=time_per_question).grid(
-        #     row=0, column=3, sticky="ew", padx=5, pady=5
-        # )
-        # ctk.CTkComboBox(
-        #     options_grid,
-        #     values=[str(x) for x in range(10, 61)],
-        #     variable=time_per_question,
-        # ).grid(row=0, column=3, sticky="ew", padx=5, pady=5)
-        # FIXME - Validate Range: 10-60
-        ctk.CTkEntry(options_grid, textvariable=time_per_question).grid(
-            row=0, column=3, sticky="ew", padx=5, pady=5
+        time_per_question_entry = ctk.CTkEntry(
+            options_grid, textvariable=time_per_question
         )
+        time_per_question_entry.grid(row=0, column=3, sticky="ew", padx=5, pady=5)
 
         ctk.CTkLabel(options_grid, text="จำนวนเลขสุ่มในโจทย์").grid(
             row=1, column=0, sticky="e", padx=(5, 0), pady=5
@@ -121,7 +106,7 @@ class RoundOptionFrame(ctk.CTkFrame):
                 else:
                     option.highlighted_question_digits.discard(i)
 
-                app.trigger_update_rounds('highlighted_question_digits')
+                app.trigger_update_rounds("highlighted_question_digits")
 
             return on
 
@@ -151,24 +136,46 @@ class RoundOptionFrame(ctk.CTkFrame):
         redraw_checkboxes()
 
         def on_question_count_changed(*_):
-            option.question_count = question_count.get()
+            try:
+                count = question_count.get()
+                assert 0 < count < 100
+            except (tk.TclError, AssertionError):
+                question_count_entry.configure(border_color="red", border_width=2)
+                return
+
+            question_count_entry.configure(
+                border_color=THEME.CTkEntry.border_color[0],
+                border_width=THEME.CTkEntry.border_width,
+            )
+            option.question_count = count
 
         def on_time_per_question_changed(*_):
-            option.time_per_question = time_per_question.get()
+            try:
+                seconds = time_per_question.get()
+                assert 0 < seconds < 100
+            except (tk.TclError, AssertionError):
+                time_per_question_entry.configure(border_color="red", border_width=2)
+                return
 
-            app.trigger_update_rounds('timer')
+            time_per_question_entry.configure(
+                border_color=THEME.CTkEntry.border_color[0],
+                border_width=THEME.CTkEntry.border_width,
+            )
+            option.time_per_question = seconds
+
+            app.trigger_update_rounds("timer")
 
         def on_question_digit_changed(*_):
             option.question_digit = question_digit.get()
 
             redraw_checkboxes()
 
-            app.trigger_update_rounds('question_digit')
+            app.trigger_update_rounds("question_digit")
 
         def on_answer_digit_changed(*_):
             option.answer_digit = answer_digit.get()
 
-            app.trigger_update_rounds('answer_digit')
+            app.trigger_update_rounds("answer_digit")
 
         question_count.trace_add("write", on_question_count_changed)
         time_per_question.trace_add("write", on_time_per_question_changed)
@@ -183,7 +190,9 @@ class RoundOptionFrame(ctk.CTkFrame):
         self._index = index
 
         self._round_label.configure(text=f"รอบที่ {index + 1}")
-        self._question_count_entry.configure(state="normal" if can_delete else "disabled")
+        self._question_count_entry.configure(
+            state="normal" if can_delete else "disabled"
+        )
 
         if can_delete:
             self._remove_btn.pack(side="right", fill="both")

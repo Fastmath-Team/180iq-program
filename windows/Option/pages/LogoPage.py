@@ -11,7 +11,7 @@ class LogoPage(ctk.CTkFrame):
     def __init__(self, master, app: AppInterface, **kwargs):
         super().__init__(master, **kwargs)
 
-        ctk.CTkLabel(self, text="ระบุชื่องาน", anchor="w").pack(
+        ctk.CTkLabel(self, text="ระบุชื่องาน", font=(None, 16, "bold"), anchor="w").pack(
             fill="x", padx=10, pady=(10, 5)
         )
 
@@ -29,9 +29,9 @@ class LogoPage(ctk.CTkFrame):
         select_logo_frame = ctk.CTkFrame(self, fg_color="transparent")
         select_logo_frame.pack(fill="x", pady=10, padx=10)
 
-        ctk.CTkLabel(select_logo_frame, text="โลโก้งาน", anchor="w").pack(
-            side="left", fill="both", expand=True
-        )
+        ctk.CTkLabel(
+            select_logo_frame, text="โลโก้งาน", font=(None, 16, "bold"), anchor="w"
+        ).pack(side="left", fill="both", expand=True)
 
         def select_images():
             filetypes = [("ไฟล์รูปภาพ", "*.png *.jpg *.jpeg *.gif *.bmp")]

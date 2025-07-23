@@ -6,6 +6,22 @@ import customtkinter as ctk
 
 from interface import AppInterface, Round
 
+"""
+    NOTE
+    1. เอา "ประวัติโจทย์" ข้างใน Rich Text ออก
+    2. เพิ่มกติกาของแต่ละรอบ (เวลา+เน้นตัวไหน)
+    3. ประวัติไม่ทับ แต่ต้องขึ้นข้
+
+        > 1
+        > 1234 - 56
+        > -> 2
+        > <- 1
+        > 7777 - 12
+        >
+        > 1. 1234 - 56
+        > 1. 7777 - 12
+"""
+
 
 # i know we can merge these two functions together
 def build_text(rounds: list[Round]) -> str:
@@ -60,9 +76,9 @@ class HistoryPage(ctk.CTkFrame):
         top_frame = ctk.CTkFrame(self, fg_color="transparent")
         top_frame.pack(fill="x", pady=10, padx=10)
 
-        ctk.CTkLabel(top_frame, text="ประวัติโจทย์", anchor="w").pack(
-            side="left", fill="both", expand=True
-        )
+        ctk.CTkLabel(
+            top_frame, text="ประวัติโจทย์", font=(None, 16, "bold"), anchor="w"
+        ).pack(side="left", fill="both", expand=True)
 
         def copy_text(*_):
             self.clipboard_clear()
@@ -116,7 +132,6 @@ class RichText(ctk.CTkTextbox):
             cnf = {}
 
         if "state" in cnf:
-            # FIXME - Recheck
             return self._textbox.configure(state=cnf["state"])
 
         return super().configure(cnf, **kw)  # type: ignore

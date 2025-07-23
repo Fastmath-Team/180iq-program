@@ -34,7 +34,7 @@ class OptionWindow(ctk.CTkToplevel):
         logo_page = LogoPage(right_frame, app=self.app)
         history_page = HistoryPage(right_frame, app=self.app)
 
-        ctk.CTkLabel(left_frame, text="ตั้งค่า", font=("Arial", 16, "bold")).pack(
+        ctk.CTkLabel(left_frame, text="ตั้งค่า", font=(None, 16, "bold")).pack(
             fill="x", pady=10
         )
 

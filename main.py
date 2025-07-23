@@ -7,7 +7,6 @@ from PIL import Image
 from components.Countdown import Countdown
 from components.Digits import Digits
 from interface import AppInterface, QuestionAnswer, Round, RoundOptions
-from styles.buttons import BUTTON_GREEN_STYLES, BUTTON_ORANGE_STYLES
 from styles.theme import THEME
 from utils.file import get_file
 from utils.logo import update_logo_in_frame
@@ -87,15 +86,16 @@ class App(ctk.CTk, AppInterface):
 
         self._create_widgets()
         # self._on_open_option_window()
+        self.trigger_update_rounds("all")
 
     def _create_widgets(self):
-        self.grid_columnconfigure(0, weight=2)
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=0)
         self.grid_rowconfigure(0, weight=1)
 
         left_frame = ctk.CTkFrame(self, fg_color="transparent")
         left_frame.grid(row=0, column=0, sticky="nsew")
-        right_frame = ctk.CTkFrame(self, fg_color="transparent")
+        right_frame = ctk.CTkFrame(self, fg_color="transparent", width=0)
         right_frame.grid(row=0, column=1, sticky="nsew")
 
         # --- LEFT SIDE ---
@@ -107,7 +107,7 @@ class App(ctk.CTk, AppInterface):
         self._event_name_label = event_name_label = ctk.CTkLabel(
             event_title_area,
             text=self._event_name,
-            font=("Arial", 16),
+            font=(None, 16),
             anchor="w",
             text_color=THEME.CTkFrame.fg_color[0],
         )
@@ -124,18 +124,11 @@ class App(ctk.CTk, AppInterface):
         self._problem_frame = problem_center_frame = Digits(problem_frame)
         problem_center_frame.pack(expand=True)
 
-        # TODO - สุ่ม math.random() ต่อ digit ได้เลย ไม่ต้องอ้างอิงกฎ
-        problem_center_frame.set_digits(['-'] * 4)
-        problem_center_frame.set_highlighted_digits(set())
-
         answer_frame = ctk.CTkFrame(left_frame)
         answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
 
-        self._answer_frame = answer_center_frame = Digits(answer_frame)
+        self._answer_frame = answer_center_frame = Digits(answer_frame, mode="compact")
         answer_center_frame.pack(expand=True)
-
-        answer_center_frame.set_digits(['-'] * 2)
-        problem_center_frame.set_highlighted_digits(set())
 
         # --- RIGHT SIDE ---
         fastmathLogo = ctk.CTkImage(
@@ -149,19 +142,19 @@ class App(ctk.CTk, AppInterface):
         round_frame.pack(fill="x", padx=10, pady=10)
 
         self._round_question_label = round_question_label = ctk.CTkLabel(
-            round_frame, text="รอบที่ 1 ข้อที่ 1", font=("Arial", 16), pady=10
+            round_frame, text="รอบที่ 1 ข้อที่ 1", font=(None, 24), padx=10, pady=15
         )
         round_question_label.pack(fill="x", padx=10)
 
         self._cnt = cnt = Countdown(
             right_frame,
-            21,
+            30,
             on_begin=self._on_countdown_begin,
             on_end=self._on_countdown_end,
         )
         cnt.pack(fill="both", padx=10, expand=True)
 
-        action_frame = ctk.CTkFrame(right_frame, fg_color="transparent")
+        action_frame = ctk.CTkFrame(right_frame)
         action_frame.pack(fill="x", padx=10, pady=10)
 
         self._get_question_btn = get_question_btn = ctk.CTkButton(
@@ -171,9 +164,8 @@ class App(ctk.CTk, AppInterface):
             width=0,
             height=56,
             font=(None, 24),
-            **BUTTON_ORANGE_STYLES,
         )
-        get_question_btn.pack(fill="x")
+        get_question_btn.pack(fill="x", padx=10, pady=(10, 0))
 
         self._get_answer_btn = get_answer_btn = ctk.CTkButton(
             action_frame,
@@ -182,12 +174,11 @@ class App(ctk.CTk, AppInterface):
             width=0,
             height=56,
             font=(None, 24),
-            **BUTTON_GREEN_STYLES,
         )
-        get_answer_btn.pack(fill="x", pady=10)
+        get_answer_btn.pack(fill="x", padx=10, pady=10)
 
         action_ext_frame = ctk.CTkFrame(action_frame, fg_color="transparent")
-        action_ext_frame.pack(fill="x")
+        action_ext_frame.pack(fill="x", padx=10, pady=(0, 10))
 
         action_ext_frame.columnconfigure(1, weight=1)
 
@@ -210,7 +201,12 @@ class App(ctk.CTk, AppInterface):
         if self._spin_problem_timer_handle:
             self.after_cancel(self._spin_problem_timer_handle)
 
-        digits = [str(random.randint(0, 9)) for _ in range(self._rounds[self._current_round_index].options.question_digit)]
+        digits = [
+            str(random.randint(0, 9))
+            for _ in range(
+                self._rounds[self._current_round_index].options.question_digit
+            )
+        ]
 
         def after_spin():
             self._problem_frame.stop_spinning()
@@ -226,7 +222,10 @@ class App(ctk.CTk, AppInterface):
         if self._spin_answer_timer_handle:
             self.after_cancel(self._spin_answer_timer_handle)
 
-        digits = [str(random.randint(0, 9)) for _ in range(self._rounds[self._current_round_index].options.answer_digit)]
+        digits = [
+            str(random.randint(0, 9))
+            for _ in range(self._rounds[self._current_round_index].options.answer_digit)
+        ]
 
         def after_spin():
             self._answer_frame.stop_spinning()
@@ -243,27 +242,41 @@ class App(ctk.CTk, AppInterface):
             self._current_index -= 1
         elif self._current_round_index > 0:
             self._current_round_index -= 1
-            self._current_index = self._rounds[self._current_round_index].options.question_count - 1
+            self._current_index = (
+                self._rounds[self._current_round_index].options.question_count - 1
+            )
 
-            self.trigger_update_rounds('all')
+            self.trigger_update_rounds("all")
 
         self._calc_indexes()
 
     def _on_next_round(self):
-        self._rounds[self._current_round_index].items.append(QuestionAnswer(self._problem_frame.get_digits(), self._answer_frame.get_digits()))
+        self._rounds[self._current_round_index].items.append(
+            QuestionAnswer(
+                self._problem_frame.get_digits(), self._answer_frame.get_digits()
+            )
+        )
 
-        if self._current_index < self._rounds[self._current_round_index].options.question_count - 1:
+        if (
+            self._current_index
+            < self._rounds[self._current_round_index].options.question_count - 1
+        ):
             self._current_index += 1
         elif self._current_round_index < len(self._rounds) - 1:
             self._current_round_index += 1
             self._current_index = 0
 
-        self.trigger_update_rounds('all')
+        self.trigger_update_rounds("all")
 
         self._calc_indexes()
 
     def _calc_indexes(self):
-        base = sum((entry.options.question_count for entry in self._rounds[:self._current_round_index]))
+        base = sum(
+            (
+                entry.options.question_count
+                for entry in self._rounds[: self._current_round_index]
+            )
+        )
         self._round_question_label.configure(
             text=f"รอบที่ {self._current_round_index + 1} ข้อที่ {base + self._current_index + 1}"
         )
@@ -305,23 +318,27 @@ class App(ctk.CTk, AppInterface):
         return self._rounds
 
     def trigger_update_rounds(self, which):
-        if which in ('question_digit', 'all'):
+        if which in ("question_digit", "all"):
             self._problem_frame.set_digits(
-                ['-'] * self._rounds[self._current_round_index].options.question_digit
+                ["–"] * self._rounds[self._current_round_index].options.question_digit
             )
 
-        if which in ('answer_digit', 'all'):
+        if which in ("answer_digit", "all"):
             self._answer_frame.set_digits(
-                ['-'] * self._rounds[self._current_round_index].options.answer_digit
+                ["–"] * self._rounds[self._current_round_index].options.answer_digit
             )
 
-        if which in ('highlighted_question_digits', 'all'):
+        if which in ("highlighted_question_digits", "all"):
             self._problem_frame.set_highlighted_digits(
-                self._rounds[self._current_round_index].options.highlighted_question_digits
+                self._rounds[
+                    self._current_round_index
+                ].options.highlighted_question_digits
             )
 
-        if which in ('timer', 'all'):
-            self._cnt.set_time(self._rounds[self._current_round_index].options.time_per_question)
+        if which in ("timer", "all"):
+            self._cnt.set_time(
+                self._rounds[self._current_round_index].options.time_per_question
+            )
 
     @property
     def current_index(self):

@@ -26,36 +26,6 @@ BUTTON_DEFAULT_STYLES: ButtonStylesDict = {
     ),
 }
 
-BUTTON_YELLOW_STYLES: ButtonStylesDict = {
-    "corner_radius": 6,
-    "border_width": 2,
-    "fg_color": THEME.CTkFrame.fg_color[0],
-    "hover_color": THEME.CTkFrame.top_fg_color[0],
-    "border_color": ("#F8D650", "#1f538d"),
-    "text_color": ("#C1A10D", "#1f538d"),
-    "text_color_disabled": ("gray74", "gray60"),
-}
-
-BUTTON_ORANGE_STYLES: ButtonStylesDict = {
-    "corner_radius": 6,
-    "border_width": 2,
-    "fg_color": THEME.CTkFrame.fg_color[0],
-    "hover_color": THEME.CTkFrame.top_fg_color[0],
-    "border_color": ("#E9983F", "#1f538d"),
-    "text_color": ("#E9983F", "#1f538d"),
-    "text_color_disabled": ("gray74", "gray60"),
-}
-
-BUTTON_GREEN_STYLES: ButtonStylesDict = {
-    "corner_radius": 6,
-    "border_width": 2,
-    "fg_color": THEME.CTkFrame.fg_color[0],
-    "hover_color": THEME.CTkFrame.top_fg_color[0],
-    "border_color": ("#49A35B", "#1f538d"),
-    "text_color": ("#49A35B", "#1f538d"),
-    "text_color_disabled": ("gray74", "gray60"),
-}
-
 BUTTON_FILLED_STYLES: ButtonStylesDict = {
     "corner_radius": 6,
     "border_width": 0,

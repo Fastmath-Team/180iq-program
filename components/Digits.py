@@ -1,19 +1,56 @@
 import random
+from typing import Literal
 
 import customtkinter as ctk
 
+from styles.colors import COLORS
+from styles.theme import THEME
 
-class Digits(ctk.CTkFrame):
-    def __init__(self, master, **kwargs):
+
+class Digit(ctk.CTkFrame):
+    def __init__(self, master, mode: Literal["compact", "full"] = "full", **kwargs):
         super().__init__(
             master,
             fg_color="transparent",
-            border_color="gray10",
-            border_width=1,
+            border_color=THEME.CTkFrame.top_fg_color[0],
+            border_width=2 if mode == "full" else 0,
             **kwargs,
         )
 
-        self._digits: list[ctk.CTkLabel] = []
+        self._label = ctk.CTkLabel(
+            self,
+            text="0",
+            font=(None, 108, "bold"),
+            anchor="center",
+            padx=10 if mode == "full" else 0,
+        )
+
+        self._label.pack(padx=10 if mode == "full" else 1, pady=10, expand=True)
+
+    def set_text(self, text: str):
+        self._label.configure(text=text)
+
+    def get_text(self) -> str:
+        return self._label.cget("text")
+
+    def set_highlight(self, highlight: bool):
+        self._label.configure(
+            text_color=COLORS["GREEN"] if highlight else THEME.CTkLabel.text_color[0]
+        )
+
+
+class Digits(ctk.CTkFrame):
+    def __init__(self, master, mode: Literal["compact", "full"] = "full", **kwargs):
+        super().__init__(
+            master,
+            fg_color="transparent"
+            if mode == "full"
+            else THEME.CTkFrame.top_fg_color[0],
+            **kwargs,
+        )
+
+        self._mode: Literal["compact", "full"] = mode
+        self._digits: list[Digit] = []
 
         self._spinning_timer_handle: str = ""
 
@@ -22,15 +59,13 @@ class Digits(ctk.CTkFrame):
 
         if diff > 0:
             for i in range(diff):
-                label = ctk.CTkLabel(
-                    self,
-                    text="0",
-                    font=("Arial", 108, "bold"),
-                    anchor="center",
-                    padx=10,
-                )
+                label = Digit(self, mode=self._mode)
 
-                label.grid(row=0, column=len(self._digits), padx=10)
+                label.grid(
+                    row=0,
+                    column=len(self._digits),
+                    padx=10 if self._mode == "full" else 10,
+                )
 
                 self._digits.append(label)
 
@@ -40,16 +75,16 @@ class Digits(ctk.CTkFrame):
                 label.destroy()
 
         for digit, label in zip(digits, self._digits):
-            label.configure(text=f"{digit}")
+            label.set_text(f"{digit}")
 
     def get_digits(self) -> list[str]:
-        return [label.cget("text") for label in self._digits]
+        return [label.get_text() for label in self._digits]
 
     digits = property(get_digits, set_digits)
 
     def set_highlighted_digits(self, digits: set[int]):
         for i, label in enumerate(self._digits):
-            label.configure(fg_color="yellow2" if i in digits else "transparent")
+            label.set_highlight(i in digits)
 
     def start_spinning(self):
         self.stop_spinning()
@@ -62,6 +97,6 @@ class Digits(ctk.CTkFrame):
 
     def _spin(self):
         for label in self._digits:
-            label.configure(text=random.choice("0123456789"))
+            label.set_text(random.choice("0123456789"))
 
         self._spinning_timer_handle = self.after(50, self._spin)

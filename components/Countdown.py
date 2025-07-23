@@ -1,12 +1,11 @@
 import math
-import tkinter as tk
 from typing import Callable
 
 import customtkinter as ctk
 
-from styles.buttons import BUTTON_YELLOW_STYLES
 from styles.colors import COLORS
 from styles.progress import (
+    PROGRESS_EMPTY_STYLES,
     PROGRESS_ORANGE_STYLES,
     PROGRESS_RED_STYLES,
     PROGRESS_YELLOW_STYLES,
@@ -15,20 +14,22 @@ from styles.progress import (
 TimerCallback = Callable[[], None]
 
 
-def get_time_label_color(seconds):
-    if seconds > 20:
-        return COLORS["YELLOW_TEXT"]
-    elif seconds > 10:
+def get_time_label_color(ratio: float):
+    if ratio > 2 / 3:
+        return COLORS["YELLOW"]
+    elif ratio > 1 / 3:
         return COLORS["ORANGE"]
     else:
         return COLORS["RED"]
 
 
-def get_progress_bar_color(seconds):
-    if seconds > 20:
+def get_progress_bar_color(ratio: float):
+    if ratio > 2 / 3:
         return PROGRESS_YELLOW_STYLES
-    elif seconds > 10:
+    elif ratio > 1 / 3:
         return PROGRESS_ORANGE_STYLES
+    elif ratio == 0:
+        return PROGRESS_EMPTY_STYLES
     else:
         return PROGRESS_RED_STYLES
 
@@ -46,7 +47,6 @@ class Countdown(ctk.CTkFrame):
 
         self.max_seconds = default_time
         self.remaining_seconds = default_time
-        self._progress_variable = tk.DoubleVar(value=1)
 
         self._on_begin = on_begin
         self._on_end = on_end
@@ -61,10 +61,10 @@ class Countdown(ctk.CTkFrame):
 
         self.time_label = time_label = ctk.CTkLabel(
             self,
-            font=("Arial", 80, "bold"),
+            font=(None, 80, "bold"),
             text=str(self.remaining_seconds),
             anchor="center",
-            text_color=get_time_label_color(self.remaining_seconds),
+            text_color=get_time_label_color(self.remaining_seconds / self.max_seconds),
         )
         time_label.grid(row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew")
 
@@ -72,31 +72,29 @@ class Countdown(ctk.CTkFrame):
             self,
             orientation="vertical",
             width=20,
-            variable=self._progress_variable,
-            **get_progress_bar_color(self.remaining_seconds),
+            determinate_speed=0.1,
+            **get_progress_bar_color(self.remaining_seconds / self.max_seconds),
         )
-        time_progress_bar.grid(
-            row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nsew"
-        )
+        time_progress_bar.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="nsew")
 
         self.button = button = ctk.CTkButton(
             self,
             text="จับเวลา",
             command=self._toggle_timer,
-            font=("Arial", 16),
+            font=(None, 16),
             height=32,
             width=0,
-            **BUTTON_YELLOW_STYLES,
         )
-        button.grid(row=1, column=0, padx=(10, 0), pady=10, sticky="nsew")
+        button.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
     def _update_widgets(self):
-        time_left = math.ceil(self.remaining_seconds)
+        time_ratio = self.remaining_seconds / self.max_seconds
         self.time_label.configure(
-            text=str(time_left), text_color=get_time_label_color(time_left)
+            text=math.ceil(self.remaining_seconds),
+            text_color=get_time_label_color(time_ratio),
         )
-        self.time_progress_bar.configure(**get_progress_bar_color(time_left))
-        self._progress_variable.set(self.remaining_seconds / self.max_seconds)
+        self.time_progress_bar.configure(**get_progress_bar_color(time_ratio))
+        self.time_progress_bar.set(time_ratio)
 
     def set_time(self, time: int):
         self._cancel_job()
