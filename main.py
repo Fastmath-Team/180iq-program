@@ -27,6 +27,7 @@ class App(ctk.CTk, AppInterface):
         self.minsize(800, 600)
 
         self._event_name = "โปรแกรมคิดเลขเร็ว"
+        self._event_logo_files: tuple[str, ...] = tuple()
         self._rounds: list[Round] = [
             Round(
                 items=[],
@@ -303,14 +304,25 @@ class App(ctk.CTk, AppInterface):
         window = OptionWindow(self)
         window.grab_set()
 
-    def update_logo(self, filepaths: tuple[str, ...] | Literal[""]):
+    def update_logo(self):
         update_logo_in_frame(
-            filepaths, self._event_logo_frame, self.image_references, padx=(10, 0)
+            self._event_logo_files,
+            self._event_logo_frame,
+            self.image_references,
+            padx=(10, 0),
         )
 
     @property
     def version(self):
         return VERSION
+
+    @property
+    def logo_filepaths(self):
+        return self._event_logo_files
+
+    @logo_filepaths.setter
+    def logo_filepaths(self, filepaths: tuple[str, ...]):
+        self._event_logo_files = filepaths
 
     @property
     def festname(self) -> str:

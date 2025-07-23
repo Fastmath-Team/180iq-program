@@ -24,11 +24,19 @@ class Round:
 
 
 class AppInterface:
-    def update_logo(self, filepaths: tuple[str, ...] | Literal[""]):
+    def update_logo(self):
         raise NotImplementedError()
 
     @property
     def version(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def logo_filepaths(self) -> tuple[str, ...]:
+        raise NotImplementedError()
+
+    @logo_filepaths.setter
+    def logo_filepaths(self, filepaths: tuple[str, ...]):
         raise NotImplementedError()
 
     @property

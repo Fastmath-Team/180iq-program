@@ -42,7 +42,8 @@ class LogoPage(ctk.CTkFrame):
             )
 
             update_logo_in_frame(filepaths, self.logo_frame, self.image_references, 64)
-            app.update_logo(filepaths)
+            app.logo_filepaths = tuple() if filepaths == "" else filepaths
+            app.update_logo()
 
         select_button = ctk.CTkButton(
             select_logo_frame, text="เลือกโลโก้", command=select_images, width=0
@@ -55,3 +56,7 @@ class LogoPage(ctk.CTkFrame):
             self, orientation="horizontal", height=72
         )
         self.logo_frame.pack(fill="x", padx=10)
+
+        update_logo_in_frame(
+            app.logo_filepaths, self.logo_frame, self.image_references, 64
+        )
