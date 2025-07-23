@@ -22,6 +22,8 @@ class OptionWindow(ctk.CTkToplevel):
         self._create_widgets()
 
     def _create_widgets(self):
+        from styles import font as FONT
+
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
 
@@ -34,7 +36,7 @@ class OptionWindow(ctk.CTkToplevel):
         logo_page = LogoPage(right_frame, app=self.app)
         history_page = HistoryPage(right_frame, app=self.app)
 
-        ctk.CTkLabel(left_frame, text="ตั้งค่า", font=(None, 16, "bold")).pack(
+        ctk.CTkLabel(left_frame, text="ตั้งค่า", font=FONT.Font16Bold).pack(
             fill="x", pady=10
         )
 

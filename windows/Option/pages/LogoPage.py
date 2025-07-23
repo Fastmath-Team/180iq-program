@@ -9,9 +9,11 @@ from utils.logo import update_logo_in_frame
 
 class LogoPage(ctk.CTkFrame):
     def __init__(self, master, app: AppInterface, **kwargs):
+        from styles import font as FONT
+
         super().__init__(master, **kwargs)
 
-        ctk.CTkLabel(self, text="ระบุชื่องาน", font=(None, 16, "bold"), anchor="w").pack(
+        ctk.CTkLabel(self, text="ระบุชื่องาน", font=FONT.Font16Bold, anchor="w").pack(
             fill="x", padx=10, pady=(10, 5)
         )
 
@@ -30,7 +32,7 @@ class LogoPage(ctk.CTkFrame):
         select_logo_frame.pack(fill="x", pady=10, padx=10)
 
         ctk.CTkLabel(
-            select_logo_frame, text="โลโก้งาน", font=(None, 16, "bold"), anchor="w"
+            select_logo_frame, text="โลโก้งาน", font=FONT.Font16Bold, anchor="w"
         ).pack(side="left", fill="both", expand=True)
 
         def select_images():

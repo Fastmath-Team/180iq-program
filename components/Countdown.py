@@ -56,12 +56,14 @@ class Countdown(ctk.CTkFrame):
         self._create_widgets()
 
     def _create_widgets(self):
+        from styles import font as FONT
+
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
         self.time_label = time_label = ctk.CTkLabel(
             self,
-            font=(None, 80, "bold"),
+            font=FONT.Font80Bold,
             text=str(self.remaining_seconds),
             anchor="center",
             text_color=get_time_label_color(self.remaining_seconds / self.max_seconds),
@@ -81,7 +83,7 @@ class Countdown(ctk.CTkFrame):
             self,
             text="จับเวลา",
             command=self._toggle_timer,
-            font=(None, 16),
+            font=FONT.Font16,
             height=32,
             width=0,
         )

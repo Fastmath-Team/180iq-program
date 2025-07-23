@@ -6,6 +6,8 @@ from interface import AppInterface, Round, RoundOptions
 
 class RoundPage(ctk.CTkFrame):
     def __init__(self, master, app: AppInterface, **kwargs):
+        from styles import font as FONT
+
         super().__init__(master, **kwargs)
 
         self._app = app
@@ -14,7 +16,7 @@ class RoundPage(ctk.CTkFrame):
         input_frame.pack(fill="x", padx=10, pady=10)
 
         ctk.CTkLabel(
-            input_frame, text="รอบการแข่งขัน", font=(None, 16, "bold"), anchor="w"
+            input_frame, text="รอบการแข่งขัน", font=FONT.Font16Bold, anchor="w"
         ).pack(side="left", fill="both", expand=True)
 
         ctk.CTkButton(

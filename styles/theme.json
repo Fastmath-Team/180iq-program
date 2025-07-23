@@ -137,17 +137,17 @@
   },
   "CTkFont": {
     "macOS": {
-      "family": "SF Display",
+      "family": "Anuphan",
       "size": 13,
       "weight": "normal"
     },
     "Windows": {
-      "family": "Roboto",
+      "family": "Anuphan",
       "size": 13,
       "weight": "normal"
     },
     "Linux": {
-      "family": "Roboto",
+      "family": "Anuphan",
       "size": 13,
       "weight": "normal"
     }

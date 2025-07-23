@@ -69,6 +69,8 @@ def build_field(rounds: list[Round], box: tk.Text):
 
 class HistoryPage(ctk.CTkFrame):
     def __init__(self, master, app: AppInterface, **kwargs):
+        from styles import font as FONT
+
         super().__init__(master, **kwargs)
 
         history = build_text(app.rounds)
@@ -77,7 +79,7 @@ class HistoryPage(ctk.CTkFrame):
         top_frame.pack(fill="x", pady=10, padx=10)
 
         ctk.CTkLabel(
-            top_frame, text="ประวัติโจทย์", font=(None, 16, "bold"), anchor="w"
+            top_frame, text="ประวัติโจทย์", font=FONT.Font16Bold, anchor="w"
         ).pack(side="left", fill="both", expand=True)
 
         def copy_text(*_):
@@ -102,24 +104,19 @@ class HistoryPage(ctk.CTkFrame):
 class RichText(ctk.CTkTextbox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        default_font = tkFont.nametofont("TkTextFont")
+        default_font = ctk.CTkFont(weight="normal")
 
         em = default_font.measure("m")
         default_size = default_font.cget("size")
-        bold_font = tkFont.Font(**default_font.configure())  # type: ignore
-        italic_font = tkFont.Font(**default_font.configure())  # type: ignore
-        h2_font = tkFont.Font(**default_font.configure())  # type: ignore
-        h3_font = tkFont.Font(**default_font.configure())  # type: ignore
-
-        bold_font.configure(weight="bold")
-        italic_font.configure(slant="italic")
-        h2_font.configure(size=int(default_size * 1.75), weight="bold")
-        h3_font.configure(size=int(default_size * 1.5), weight="bold")
+        bold_font = ctk.CTkFont(weight="bold")  # type: ignore
+        italic_font = ctk.CTkFont(slant="italic")  # type: ignore
+        h2_font = ctk.CTkFont(size=int(default_size * 1.75), weight="bold")  # type: ignore
+        h3_font = ctk.CTkFont(size=int(default_size * 1.5), weight="bold")  # type: ignore
 
         self._textbox.tag_configure("bold", font=bold_font)
         self._textbox.tag_configure("italic", font=italic_font)
-        self._textbox.tag_configure("h2", font=h2_font, spacing3=default_size)
-        self._textbox.tag_configure("h3", font=h3_font, spacing3=default_size)
+        self._textbox.tag_configure("h2", font=h2_font, spacing1=default_size * 0.25)
+        self._textbox.tag_configure("h3", font=h3_font, spacing1=default_size * 0.25)
 
         lmargin2 = em + default_font.measure("\u2022 ")
         self._textbox.tag_configure("bullet", lmargin1=em, lmargin2=lmargin2)

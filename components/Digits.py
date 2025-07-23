@@ -9,6 +9,8 @@ from styles.theme import THEME
 
 class Digit(ctk.CTkFrame):
     def __init__(self, master, mode: Literal["compact", "full"] = "full", **kwargs):
+        from styles import font as FONT
+
         super().__init__(
             master,
             fg_color="transparent",
@@ -20,7 +22,7 @@ class Digit(ctk.CTkFrame):
         self._label = ctk.CTkLabel(
             self,
             text="0",
-            font=(None, 108, "bold"),
+            font=FONT.Font108Bold,
             anchor="center",
             padx=10 if mode == "full" else 0,
         )

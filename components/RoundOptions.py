@@ -17,6 +17,8 @@ class RoundOptionFrame(ctk.CTkFrame):
         on_remove: Callable[[int], None],
         **kwargs,
     ):
+        from styles import font as FONT
+
         super().__init__(master, fg_color=THEME.CTkFrame.fg_color[0], **kwargs)
 
         self._app = app
@@ -37,7 +39,7 @@ class RoundOptionFrame(ctk.CTkFrame):
         title_frame.pack(fill="x", padx=10, pady=(10, 0))
 
         self._round_label = round_label = ctk.CTkLabel(
-            title_frame, text="", font=(None, 12, "bold"), anchor="w"
+            title_frame, text="", font=FONT.Font13Bold, anchor="w"
         )
         round_label.pack(side="left", fill="both", expand=True)
 

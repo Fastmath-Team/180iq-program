@@ -91,6 +91,8 @@ class App(ctk.CTk, AppInterface):
         self.trigger_update_rounds("all")
 
     def _create_widgets(self):
+        from styles import font as FONT
+
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_rowconfigure(0, weight=1)
@@ -109,7 +111,7 @@ class App(ctk.CTk, AppInterface):
         self._event_name_label = event_name_label = ctk.CTkLabel(
             event_title_area,
             text=self._event_name,
-            font=(None, 16),
+            font=FONT.Font16Bold,
             anchor="w",
             text_color=THEME.CTkFrame.fg_color[0],
         )
@@ -144,7 +146,7 @@ class App(ctk.CTk, AppInterface):
         round_frame.pack(fill="x", padx=10, pady=10)
 
         self._round_question_label = round_question_label = ctk.CTkLabel(
-            round_frame, text="รอบที่ 1 ข้อที่ 1", font=(None, 24), padx=10, pady=15
+            round_frame, text="รอบที่ 1 ข้อที่ 1", font=FONT.Font24, padx=10, pady=10
         )
         round_question_label.pack(fill="x", padx=10)
 
@@ -165,7 +167,7 @@ class App(ctk.CTk, AppInterface):
             command=self._on_spin_problem,
             width=0,
             height=56,
-            font=(None, 24),
+            font=FONT.Font24,
         )
         get_question_btn.pack(fill="x", padx=10, pady=(10, 0))
 
@@ -175,7 +177,7 @@ class App(ctk.CTk, AppInterface):
             command=self._on_spin_answer,
             width=0,
             height=56,
-            font=(None, 24),
+            font=FONT.Font24,
         )
         get_answer_btn.pack(fill="x", padx=10, pady=10)
 
