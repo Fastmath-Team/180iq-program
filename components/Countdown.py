@@ -2,6 +2,7 @@ import math
 from typing import Callable
 
 import customtkinter as ctk
+import pygame.mixer
 
 from styles import colors as COLORS
 from styles.progress import (
@@ -10,6 +11,7 @@ from styles.progress import (
     PROGRESS_RED_STYLES,
     PROGRESS_YELLOW_STYLES,
 )
+from utils.file import get_file
 
 TimerCallback = Callable[[], None]
 
@@ -44,6 +46,10 @@ class Countdown(ctk.CTkFrame):
         **kwargs,
     ):
         super().__init__(master, **kwargs)
+
+        pygame.mixer.init(44100, -16, 2, 2048)
+        self.sound = pygame.mixer.Sound(get_file("assets/ding.mp3"))
+        self.sound.set_volume(1)
 
         self.max_seconds = default_time
         self.remaining_seconds = default_time
@@ -145,5 +151,6 @@ class Countdown(ctk.CTkFrame):
         if self.remaining_seconds:
             self._schedule_job()
         else:
-            # TODO - Play sound
+            if self.sound:
+                self.sound.play()
             self._cancel_job()
