@@ -28,7 +28,13 @@ def build_text(rounds: list[Round]) -> str:
     i = 1
 
     for x, round in enumerate(rounds):
-        s.append(f"รอบที่ {x + 1}")
+        o = round.options
+        d = (
+            ('[เน้นตัว ' + ', '.join(map(lambda x: str(x + 1), o.highlighted_question_digits)) + ']') if o.highlighted_question_digits else
+            ''
+        )
+
+        s.append(f"รอบที่ {x + 1} [เวลา {o.time_per_question} วินาที] {d}")
 
         if len(round.items) == 0:
             s.append("ยังไม่ได้เริ่ม\n")
@@ -37,7 +43,7 @@ def build_text(rounds: list[Round]) -> str:
 
         for hist in round.items:
             q = " ".join(map(str, hist.question))
-            s.append(f"{i}: {q} -> {hist.answer}")
+            s.append(f"{hist.index + 1}: {q} -> {hist.answer}")
 
             i += 1
 
@@ -47,10 +53,14 @@ def build_text(rounds: list[Round]) -> str:
 def build_field(rounds: list[Round], box: tk.Text):
     i = 1
 
-    box.insert("end", "ประวัติโจทย์:\n", "h2")
-
     for x, round in enumerate(rounds):
-        box.insert("end", f"รอบที่ {x + 1}\n", "h3")
+        o = round.options
+        d = (
+            ('[เน้นตัว ' + ', '.join(map(lambda x: str(x + 1), o.highlighted_question_digits)) + ']') if o.highlighted_question_digits else
+            ''
+        )
+
+        box.insert("end", f"รอบที่ {x + 1} [เวลา {o.time_per_question} วินาที] {d}\n", "h3")
 
         if len(round.items) == 0:
             box.insert("end", "ยังไม่ได้เริ่ม\n")
@@ -61,7 +71,7 @@ def build_field(rounds: list[Round], box: tk.Text):
             q = " ".join(hist.question)
             a = "".join(hist.answer)
 
-            box.insert("end", f"{i}: {q} -> {a}\n")
+            box.insert("end", f"{hist.index + 1}: {q} -> {a}\n")
 
             i += 1
 
@@ -109,12 +119,10 @@ class RichText(ctk.CTkTextbox):
         default_size = default_font.cget("size")
         bold_font = ctk.CTkFont(weight="bold")  # type: ignore
         italic_font = ctk.CTkFont(slant="italic")  # type: ignore
-        h2_font = ctk.CTkFont(size=int(default_size * 1.75), weight="bold")  # type: ignore
         h3_font = ctk.CTkFont(size=int(default_size * 1.5), weight="bold")  # type: ignore
 
         self._textbox.tag_configure("bold", font=bold_font)
         self._textbox.tag_configure("italic", font=italic_font)
-        self._textbox.tag_configure("h2", font=h2_font, spacing1=default_size * 0.25)
         self._textbox.tag_configure("h3", font=h3_font, spacing1=default_size * 0.25)
 
         lmargin2 = em + default_font.measure("\u2022 ")

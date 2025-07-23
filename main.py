@@ -3,6 +3,7 @@ from typing import Literal
 
 import customtkinter as ctk
 from PIL import Image
+from bisect import bisect_right
 
 from components.Countdown import Countdown
 from components.Digits import Digits
@@ -256,9 +257,18 @@ class App(ctk.CTk, AppInterface):
         self._calc_indexes()
 
     def _on_next_round(self):
-        self._rounds[self._current_round_index].items.append(
+        x = bisect_right(
+            self._rounds[self._current_round_index].items,
+            self._current_index,
+            key=lambda x: x.index
+        )
+
+        self._rounds[self._current_round_index].items.insert(
+            x,
             QuestionAnswer(
-                self._problem_frame.get_digits(), self._answer_frame.get_digits()
+                self._current_index,
+                self._problem_frame.get_digits(),
+                self._answer_frame.get_digits()
             )
         )
 

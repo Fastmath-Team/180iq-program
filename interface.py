@@ -13,6 +13,7 @@ class RoundOptions:
 
 @dataclass(frozen=True)
 class QuestionAnswer:
+    index: int
     question: list[str]
     answer: list[str]
 
