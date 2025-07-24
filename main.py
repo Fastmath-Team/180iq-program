@@ -308,8 +308,11 @@ class App(ctk.CTk, AppInterface):
         window = OptionWindow(self)
         window.grab_set()
 
-    def update_logo(self, size=24):
-        _size = size or 24
+    def get_logo_height(self) -> int:
+        return get_responsive_value_from_width(self.winfo_width(), (24, 38, 48, 62))
+
+    def update_logo(self, size):
+        _size = size or self.get_logo_height()
         self._event_logo_frame.configure(height=_size)
         update_logo_in_frame(
             self._event_logo_files,
@@ -332,7 +335,7 @@ class App(ctk.CTk, AppInterface):
 
         self.__FONT__.update_font_size(current_width)
 
-        logo_size = get_responsive_value_from_width(current_width, (24, 38, 48, 62))
+        logo_size = self.get_logo_height()
         self._fastmath_logo.configure(size=(math.ceil(291 / 48 * logo_size), logo_size))
         self.update_logo(logo_size)
 
