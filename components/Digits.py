@@ -25,6 +25,7 @@ class Digit(ctk.CTkFrame):
             font=FONT.Font108Bold,
             anchor="center",
             padx=10 if mode == "full" else 0,
+            text_color=COLORS.Fastmath if mode == "compact" else None,
         )
 
         self._label.pack(padx=10 if mode == "full" else 1, pady=2, expand=True)
