@@ -97,7 +97,7 @@ class RoundOptionFrame(ctk.CTkFrame):
         )
 
         highlight_frame = ctk.CTkFrame(self, fg_color="transparent")
-        highlight_frame.pack(fill="x", padx=10, pady=(5, 0))
+        highlight_frame.pack(fill="x", padx=10, pady=(5, 10))
 
         self._disclaimer_label = round_label = ctk.CTkLabel(
             self,
@@ -210,6 +210,6 @@ class RoundOptionFrame(ctk.CTkFrame):
             self._remove_btn.pack_forget()
 
         if is_played:
-            self._disclaimer_label.pack(fill="x", padx=10, pady=(5, 10))
+            self._disclaimer_label.pack(fill="x", padx=10, pady=(0, 5))
         else:
             self._disclaimer_label.pack_forget()
