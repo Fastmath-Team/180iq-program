@@ -1,5 +1,6 @@
 import math
 import random
+import tkinter as tk
 from bisect import bisect_right
 
 import customtkinter as ctk
@@ -27,6 +28,7 @@ class App(ctk.CTk, AppInterface):
         self.title("โปรแกรมคิดเลขเร็ว — Fastmath")
         self.geometry("800x600")
         self.minsize(800, 600)
+        self.iconphoto(True, tk.PhotoImage(file=get_file("assets/icon.png")))
 
         self._event_name = "โปรแกรมคิดเลขเร็ว"
         self._event_logo_files: tuple[str, ...] = tuple()
