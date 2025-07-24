@@ -17,7 +17,7 @@ from utils.responsive import get_responsive_value_from_width
 from windows.Option import OptionWindow
 
 ctk.set_appearance_mode("Light")
-ctk.set_default_color_theme("./styles/theme.json")
+ctk.set_default_color_theme(get_file("styles/theme.json"))
 
 VERSION = "1.0.0"
 
