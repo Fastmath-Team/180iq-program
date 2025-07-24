@@ -41,50 +41,11 @@ class App(ctk.CTk, AppInterface):
                     highlighted_question_digits=set(),
                 ),
             ),
-            Round(
-                items=[],
-                options=RoundOptions(
-                    question_count=10,
-                    time_per_question=30,
-                    question_digit=4,
-                    answer_digit=2,
-                    highlighted_question_digits=set(),
-                ),
-            ),
-            Round(
-                items=[],
-                options=RoundOptions(
-                    question_count=10,
-                    time_per_question=30,
-                    question_digit=4,
-                    answer_digit=2,
-                    highlighted_question_digits=set(),
-                ),
-            ),
-            Round(
-                items=[],
-                options=RoundOptions(
-                    question_count=10,
-                    time_per_question=30,
-                    question_digit=4,
-                    answer_digit=2,
-                    highlighted_question_digits=set(),
-                ),
-            ),
-            Round(
-                items=[],
-                options=RoundOptions(
-                    question_count=10,
-                    time_per_question=30,
-                    question_digit=4,
-                    answer_digit=2,
-                    highlighted_question_digits=set(),
-                ),
-            ),
         ]
 
         self._current_index = 0
         self._current_round_index = 0
+        self._current_last = False
 
         self._spin_problem_timer_handle = ""
         self._spin_answer_timer_handle = ""
@@ -263,6 +224,9 @@ class App(ctk.CTk, AppInterface):
         self._spin_answer_timer_handle = self.after(1500, after_spin)
 
     def _on_prev_round(self):
+        self._current_last = False
+        self._next_btn.configure(state="normal")
+
         if self._current_index > 0:
             self._current_index -= 1
         elif self._current_round_index > 0:
@@ -281,11 +245,16 @@ class App(ctk.CTk, AppInterface):
         o = r.options
         i = r.items
 
+        prev_last = self._current_last
+
         if self._current_index < o.question_count - 1:
             self._current_index += 1
         elif self._current_round_index < len(self._rounds) - 1:
             self._current_round_index += 1
             self._current_index = 0
+        elif not prev_last:
+            self._current_last = True
+            self._next_btn.configure(state="disabled")
         else:
             return
 
@@ -299,6 +268,9 @@ class App(ctk.CTk, AppInterface):
                 set(o.highlighted_question_digits),
             ),
         )
+
+        if not prev_last and self._current_last:
+            return
 
         self.trigger_update_rounds("all")
         self._calc_indexes()
