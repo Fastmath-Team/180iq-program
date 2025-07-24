@@ -357,7 +357,7 @@ class App(ctk.CTk, AppInterface):
 
         self.__FONT__.update_font_size(current_width)
 
-        logo_size = get_responsive_value_from_width(current_width, (24, 30, 40, 52))
+        logo_size = get_responsive_value_from_width(current_width, (24, 38, 48, 62))
         self._fastmath_logo.configure(size=(math.ceil(291 / 48 * logo_size), logo_size))
         self.update_logo(logo_size)
 

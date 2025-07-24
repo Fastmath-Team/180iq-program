@@ -137,17 +137,17 @@
   },
   "CTkFont": {
     "macOS": {
-      "family": "Anuphan",
+      "family": "IBM Plex Sans Thai",
       "size": 13,
       "weight": "normal"
     },
     "Windows": {
-      "family": "Anuphan",
+      "family": "IBM Plex Sans Thai",
       "size": 13,
       "weight": "normal"
     },
     "Linux": {
-      "family": "Anuphan",
+      "family": "IBM Plex Sans Thai",
       "size": 13,
       "weight": "normal"
     }
