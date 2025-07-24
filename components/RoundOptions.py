@@ -4,6 +4,7 @@ from typing import Callable
 import customtkinter as ctk
 
 from interface import AppInterface, Round
+from styles import colors as COLORS
 from styles.theme import THEME
 
 
@@ -96,7 +97,13 @@ class RoundOptionFrame(ctk.CTkFrame):
         )
 
         highlight_frame = ctk.CTkFrame(self, fg_color="transparent")
-        highlight_frame.pack(fill="x", padx=10, pady=(5, 10))
+        highlight_frame.pack(fill="x", padx=10, pady=(5, 0))
+
+        self._disclaimer_label = round_label = ctk.CTkLabel(
+            self,
+            text="เปลี่ยนจำนวนข้อ/ลบรอบไม่ได้ เนื่องจากผ่านไปแล้วอย่างน้อย 1 ข้อ",
+            text_color=COLORS.Red,
+        )
 
         current_digits: list[ctk.CTkCheckBox] = []
 
@@ -187,16 +194,22 @@ class RoundOptionFrame(ctk.CTkFrame):
         self.set_index(index)
 
     def set_index(self, index: int):
-        can_delete = len(self._app.rounds) > 1 and len(self._items) == 0
+        is_many = len(self._app.rounds) > 1
+        is_played = len(self._items) > 0
 
         self._index = index
 
         self._round_label.configure(text=f"รอบที่ {index + 1}")
         self._question_count_entry.configure(
-            state="normal" if can_delete else "disabled"
+            state="disabled" if is_played else "normal"
         )
 
-        if can_delete:
+        if is_many and not is_played:
             self._remove_btn.pack(side="right", fill="both")
         else:
             self._remove_btn.pack_forget()
+
+        if is_played:
+            self._disclaimer_label.pack(fill="x", padx=10, pady=(5, 10))
+        else:
+            self._disclaimer_label.pack_forget()
