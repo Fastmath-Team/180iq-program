@@ -257,32 +257,31 @@ class App(ctk.CTk, AppInterface):
         self._calc_indexes()
 
     def _on_next_round(self):
-        x = bisect_right(
-            self._rounds[self._current_round_index].items,
-            self._current_index,
-            key=lambda x: x.index
-        )
+        p = self._current_index
+        r = self._rounds[self._current_round_index]
+        o = r.options
+        i = r.items
 
-        self._rounds[self._current_round_index].items.insert(
-            x,
-            QuestionAnswer(
-                self._current_index,
-                self._problem_frame.get_digits(),
-                self._answer_frame.get_digits()
-            )
-        )
-
-        if (
-            self._current_index
-            < self._rounds[self._current_round_index].options.question_count - 1
-        ):
+        if self._current_index < o.question_count - 1:
             self._current_index += 1
         elif self._current_round_index < len(self._rounds) - 1:
             self._current_round_index += 1
             self._current_index = 0
+        else:
+            return
+
+        i.insert(
+            bisect_right(i, p, key=lambda x: x.index),
+            QuestionAnswer(
+                p,
+                self._problem_frame.get_digits(),
+                self._answer_frame.get_digits(),
+                o.time_per_question,
+                set(o.highlighted_question_digits)
+            )
+        )
 
         self.trigger_update_rounds("all")
-
         self._calc_indexes()
 
     def _calc_indexes(self):
@@ -292,6 +291,7 @@ class App(ctk.CTk, AppInterface):
                 for entry in self._rounds[: self._current_round_index]
             )
         )
+
         self._round_question_label.configure(
             text=f"รอบที่ {self._current_round_index + 1} ข้อที่ {base + self._current_index + 1}"
         )

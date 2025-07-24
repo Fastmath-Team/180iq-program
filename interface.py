@@ -16,6 +16,8 @@ class QuestionAnswer:
     index: int
     question: list[str]
     answer: list[str]
+    time_per_question: int
+    highlighted_question_digits: set[int]
 
 
 @dataclass(frozen=True)

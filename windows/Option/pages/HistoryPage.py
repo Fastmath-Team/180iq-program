@@ -30,13 +30,7 @@ def build_field(rounds: list[Round], box: Builder):
     i = 1
 
     for x, round in enumerate(rounds):
-        o = round.options
-        d = (
-            ('[เน้นตัว ' + ', '.join(map(lambda x: str(x + 1), o.highlighted_question_digits)) + ']') if o.highlighted_question_digits else
-            ''
-        )
-
-        box.add_text(f"รอบที่ {x + 1} [เวลา {o.time_per_question} วินาที] {d}\n", "h3")
+        box.add_text(f"รอบที่ {x + 1}\n", "h3")
 
         if len(round.items) == 0:
             box.add_text("ยังไม่ได้เริ่ม\n")
@@ -47,7 +41,12 @@ def build_field(rounds: list[Round], box: Builder):
             q = " ".join(hist.question)
             a = "".join(hist.answer)
 
-            box.add_text(f"{hist.index + 1}: {q} -> {a}\n")
+            d = (
+                ('[เน้นตัว ' + ', '.join(map(lambda x: str(x + 1), hist.highlighted_question_digits)) + ']') if hist.highlighted_question_digits else
+                ''
+            )
+
+            box.add_text(f"{hist.index + 1}: {q} -> {a} [เวลา {hist.time_per_question} วินาที] {d}\n")
 
             i += 1
 
