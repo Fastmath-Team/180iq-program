@@ -202,10 +202,8 @@ class App(ctk.CTk, AppInterface):
         def after_spin():
             self._problem_frame.stop_spinning()
             self._problem_frame.set_digits(digits)
-            self._next_btn.configure(state="normal")
 
         self._problem_frame.start_spinning()
-        self._next_btn.configure(state="disabled")
 
         self._spin_problem_timer_handle = self.after(1500, after_spin)
 
@@ -221,10 +219,8 @@ class App(ctk.CTk, AppInterface):
         def after_spin():
             self._answer_frame.stop_spinning()
             self._answer_frame.set_digits(digits)
-            self._next_btn.configure(state="normal")
 
         self._answer_frame.start_spinning()
-        self._next_btn.configure(state="disabled")
 
         self._spin_answer_timer_handle = self.after(1500, after_spin)
 
