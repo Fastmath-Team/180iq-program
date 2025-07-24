@@ -58,7 +58,7 @@ def build_field(rounds: list[Round], box: Builder):
             )
 
             box.add_text(
-                f"{hist.index + 1}: {q} -> {a} [เวลา {hist.time_per_question} วินาที] {d}\n"
+                f"{hist.index + 1}: {q} → {a} [เวลา {hist.time_per_question} วินาที] {d}\n"
             )
 
             i += 1
