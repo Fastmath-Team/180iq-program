@@ -226,8 +226,7 @@ class App(ctk.CTk, AppInterface):
         self._spin_answer_timer_handle = self.after(1500, after_spin)
 
     def _on_prev_round(self):
-        self._current_last = False
-        self._next_btn.configure(state="normal")
+        self.current_last = False
 
         if self._current_index > 0:
             self._current_index -= 1
@@ -247,7 +246,7 @@ class App(ctk.CTk, AppInterface):
         o = r.options
         i = r.items
 
-        prev_last = self._current_last
+        prev_last = self.current_last
 
         if self._current_index < o.question_count - 1:
             self._current_index += 1
@@ -255,8 +254,7 @@ class App(ctk.CTk, AppInterface):
             self._current_round_index += 1
             self._current_index = 0
         elif not prev_last:
-            self._current_last = True
-            self._next_btn.configure(state="disabled")
+            self.current_last = True
         else:
             return
 
@@ -271,7 +269,7 @@ class App(ctk.CTk, AppInterface):
             ),
         )
 
-        if not prev_last and self._current_last:
+        if not prev_last and self.current_last:
             return
 
         self.trigger_update_rounds("all")
@@ -390,6 +388,15 @@ class App(ctk.CTk, AppInterface):
     @property
     def current_round_index(self):
         return self._current_round_index
+
+    @property
+    def current_last(self) -> bool:
+        return self._current_last
+
+    @current_last.setter
+    def current_last(self, value: bool):
+        self._current_last = value
+        self._next_btn.configure(state="disabled" if value else "normal")
 
 
 if __name__ == "__main__":

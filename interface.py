@@ -73,3 +73,11 @@ class AppInterface:
     @property
     def current_round_index(self) -> int:
         raise NotImplementedError()
+
+    @property
+    def current_last(self) -> bool:
+        raise NotImplementedError()
+
+    @current_last.setter
+    def current_last(self, value: bool):
+        raise NotImplementedError()

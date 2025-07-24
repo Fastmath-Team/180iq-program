@@ -69,6 +69,7 @@ class RoundPage(ctk.CTkFrame):
 
         self._round_frames.append(round_frame)
         self._app.rounds.append(round)
+        self._app.current_last = False
 
         self._renumber_rounds()
 
