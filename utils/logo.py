@@ -1,3 +1,4 @@
+import math
 from typing import Literal
 
 import customtkinter as ctk
@@ -20,7 +21,11 @@ def update_logo_in_frame(
 
     for path in filepaths:
         try:
-            photo = ctk.CTkImage(light_image=Image.open(path), size=(size, size))
+            img = Image.open(path)
+            img_width, img_height = img.size
+            photo = ctk.CTkImage(
+                light_image=img, size=(math.ceil(img_width / img_height * size), size)
+            )
 
             img_label = ctk.CTkLabel(frame, text="", image=photo)
             img_label.pack(side="left", padx=padx)

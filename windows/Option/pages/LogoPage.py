@@ -13,9 +13,9 @@ class LogoPage(ctk.CTkFrame):
 
         super().__init__(master, **kwargs)
 
-        ctk.CTkLabel(self, text="ระบุชื่องาน", font=FONT.Font16Bold, anchor="w").pack(
-            fill="x", padx=10, pady=(10, 5)
-        )
+        ctk.CTkLabel(
+            self, text="ระบุชื่องาน", font=FONT.StaticFont16Bold, anchor="w"
+        ).pack(fill="x", padx=10, pady=(10, 5))
 
         festname = tk.StringVar(value=app.festname)
 
@@ -32,7 +32,7 @@ class LogoPage(ctk.CTkFrame):
         select_logo_frame.pack(fill="x", pady=10, padx=10)
 
         ctk.CTkLabel(
-            select_logo_frame, text="โลโก้งาน", font=FONT.Font16Bold, anchor="w"
+            select_logo_frame, text="โลโก้งาน", font=FONT.StaticFont16Bold, anchor="w"
         ).pack(side="left", fill="both", expand=True)
 
         def select_images():
@@ -43,7 +43,7 @@ class LogoPage(ctk.CTkFrame):
 
             update_logo_in_frame(filepaths, self.logo_frame, self.image_references, 64)
             app.logo_filepaths = tuple() if filepaths == "" else filepaths
-            app.update_logo()
+            app.update_logo(None)
 
         select_button = ctk.CTkButton(
             select_logo_frame, text="เลือกโลโก้", command=select_images, width=0

@@ -39,7 +39,7 @@ class RoundOptionFrame(ctk.CTkFrame):
         title_frame.pack(fill="x", padx=10, pady=(10, 0))
 
         self._round_label = round_label = ctk.CTkLabel(
-            title_frame, text="", font=FONT.Font13Bold, anchor="w"
+            title_frame, text="", font=FONT.StaticFont13Bold, anchor="w"
         )
         round_label.pack(side="left", fill="both", expand=True)
 

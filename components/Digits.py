@@ -27,7 +27,7 @@ class Digit(ctk.CTkFrame):
             padx=10 if mode == "full" else 0,
         )
 
-        self._label.pack(padx=10 if mode == "full" else 1, pady=10, expand=True)
+        self._label.pack(padx=10 if mode == "full" else 1, pady=2, expand=True)
 
     def set_text(self, text: str):
         self._label.configure(text=text)

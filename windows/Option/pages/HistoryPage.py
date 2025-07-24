@@ -5,9 +5,11 @@ import customtkinter as ctk
 
 from interface import AppInterface, Round
 
+
 class Builder:
     def add_text(self, msg: str, *a):
         raise NotImplementedError()
+
 
 class TkBuilder(Builder):
     def __init__(self, master: tk.Text):
@@ -15,6 +17,7 @@ class TkBuilder(Builder):
 
     def add_text(self, msg: str, *a):
         self._textbox.insert("end", msg, *a)
+
 
 class TextBuilder(Builder):
     def __init__(self):
@@ -25,6 +28,7 @@ class TextBuilder(Builder):
 
     def get_text(self) -> str:
         return "\n".join(self._s)
+
 
 def build_field(rounds: list[Round], box: Builder):
     i = 1
@@ -42,11 +46,20 @@ def build_field(rounds: list[Round], box: Builder):
             a = "".join(hist.answer)
 
             d = (
-                ('[เน้นตัว ' + ', '.join(map(lambda x: str(x + 1), hist.highlighted_question_digits)) + ']') if hist.highlighted_question_digits else
-                ''
+                (
+                    "[เน้นตัว "
+                    + ", ".join(
+                        map(lambda x: str(x + 1), hist.highlighted_question_digits)
+                    )
+                    + "]"
+                )
+                if hist.highlighted_question_digits
+                else ""
             )
 
-            box.add_text(f"{hist.index + 1}: {q} -> {a} [เวลา {hist.time_per_question} วินาที] {d}\n")
+            box.add_text(
+                f"{hist.index + 1}: {q} -> {a} [เวลา {hist.time_per_question} วินาที] {d}\n"
+            )
 
             i += 1
 
@@ -67,7 +80,7 @@ class HistoryPage(ctk.CTkFrame):
         top_frame.pack(fill="x", pady=10, padx=10)
 
         ctk.CTkLabel(
-            top_frame, text="ประวัติโจทย์", font=FONT.Font16Bold, anchor="w"
+            top_frame, text="ประวัติโจทย์", font=FONT.StaticFont16Bold, anchor="w"
         ).pack(side="left", fill="both", expand=True)
 
         def copy_text(*_):

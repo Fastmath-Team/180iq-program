@@ -16,7 +16,7 @@ class RoundPage(ctk.CTkFrame):
         input_frame.pack(fill="x", padx=10, pady=10)
 
         ctk.CTkLabel(
-            input_frame, text="รอบการแข่งขัน", font=FONT.Font16Bold, anchor="w"
+            input_frame, text="รอบการแข่งขัน", font=FONT.StaticFont16Bold, anchor="w"
         ).pack(side="left", fill="both", expand=True)
 
         ctk.CTkButton(

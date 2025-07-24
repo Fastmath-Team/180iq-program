@@ -1,9 +1,9 @@
+import math
 import random
-from typing import Literal
+from bisect import bisect_right
 
 import customtkinter as ctk
 from PIL import Image
-from bisect import bisect_right
 
 from components.Countdown import Countdown
 from components.Digits import Digits
@@ -11,6 +11,7 @@ from interface import AppInterface, QuestionAnswer, Round, RoundOptions
 from styles.theme import THEME
 from utils.file import get_file
 from utils.logo import update_logo_in_frame
+from utils.responsive import get_responsive_value_from_width
 from windows.Option import OptionWindow
 
 ctk.set_appearance_mode("Light")
@@ -89,11 +90,17 @@ class App(ctk.CTk, AppInterface):
         self._spin_answer_timer_handle = ""
 
         self._create_widgets()
-        # self._on_open_option_window()
+
         self.trigger_update_rounds("all")
+
+        self._current_breakpoint = 0
+        self.bind("<Configure>", self.on_window_resize)
+        self.on_window_resize(None)
 
     def _create_widgets(self):
         from styles import font as FONT
+
+        self.__FONT__ = FONT
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
@@ -137,10 +144,10 @@ class App(ctk.CTk, AppInterface):
         answer_center_frame.pack(expand=True)
 
         # --- RIGHT SIDE ---
-        fastmathLogo = ctk.CTkImage(
+        self._fastmath_logo = fastmath_logo = ctk.CTkImage(
             light_image=Image.open(get_file("assets/logo.png")), size=(145, 24)
         )
-        ctk.CTkLabel(right_frame, text="", anchor="e", image=fastmathLogo).pack(
+        ctk.CTkLabel(right_frame, text="", anchor="e", image=fastmath_logo).pack(
             fill="x", pady=(10, 0), padx=10
         )
 
@@ -189,17 +196,29 @@ class App(ctk.CTk, AppInterface):
         action_ext_frame.columnconfigure(1, weight=1)
 
         self._prev_btn = prev_btn = ctk.CTkButton(
-            action_ext_frame, text="⬅︎", command=self._on_prev_round, width=0
+            action_ext_frame,
+            text="⬅︎",
+            command=self._on_prev_round,
+            width=0,
+            font=FONT.Font13,
         )
         prev_btn.grid(row=0, column=0, sticky="w")
 
         self._next_btn = next_btn = ctk.CTkButton(
-            action_ext_frame, text="ข้อถัดไป", command=self._on_next_round, width=0
+            action_ext_frame,
+            text="ข้อถัดไป",
+            command=self._on_next_round,
+            width=0,
+            font=FONT.Font13,
         )
         next_btn.grid(row=0, column=1, sticky="ew", padx=10)
 
         self._config_btn = config_btn = ctk.CTkButton(
-            action_ext_frame, text="⚙️", command=self._on_open_option_window, width=0
+            action_ext_frame,
+            text="⚙️",
+            command=self._on_open_option_window,
+            width=0,
+            font=FONT.Font13,
         )
         config_btn.grid(row=0, column=2, sticky="e")
 
@@ -277,8 +296,8 @@ class App(ctk.CTk, AppInterface):
                 self._problem_frame.get_digits(),
                 self._answer_frame.get_digits(),
                 o.time_per_question,
-                set(o.highlighted_question_digits)
-            )
+                set(o.highlighted_question_digits),
+            ),
         )
 
         self.trigger_update_rounds("all")
@@ -314,13 +333,33 @@ class App(ctk.CTk, AppInterface):
         window = OptionWindow(self)
         window.grab_set()
 
-    def update_logo(self):
+    def update_logo(self, size=24):
+        _size = size or 24
+        self._event_logo_frame.configure(height=_size)
         update_logo_in_frame(
             self._event_logo_files,
             self._event_logo_frame,
             self.image_references,
             padx=(10, 0),
+            size=_size,
         )
+
+    def on_window_resize(self, event):
+        current_width = self.winfo_width()
+
+        width_index = get_responsive_value_from_width(current_width, (0, 1, 2, 3))
+
+        # Skip unnecessary updates
+        if width_index == self._current_breakpoint:
+            return
+
+        self._current_breakpoint = width_index
+
+        self.__FONT__.update_font_size(current_width)
+
+        logo_size = get_responsive_value_from_width(current_width, (24, 30, 40, 52))
+        self._fastmath_logo.configure(size=(math.ceil(291 / 48 * logo_size), logo_size))
+        self.update_logo(logo_size)
 
     @property
     def version(self):

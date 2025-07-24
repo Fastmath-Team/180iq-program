@@ -27,7 +27,7 @@ class Round:
 
 
 class AppInterface:
-    def update_logo(self):
+    def update_logo(self, size: int | None):
         raise NotImplementedError()
 
     @property
