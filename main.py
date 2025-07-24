@@ -1,4 +1,5 @@
 import math
+import platform
 import random
 import tkinter as tk
 from bisect import bisect_right
@@ -28,6 +29,8 @@ class App(ctk.CTk, AppInterface):
         self.title("โปรแกรมคิดเลขเร็ว — Fastmath")
         self.geometry("800x600")
         self.minsize(800, 600)
+        if platform.system() == "Windows":
+            self.iconbitmap(get_file("assets/icon.ico"))
         self.iconphoto(True, tk.PhotoImage(file=get_file("assets/icon.png")))
 
         self._event_name = "โปรแกรมคิดเลขเร็ว"

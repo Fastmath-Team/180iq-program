@@ -1,9 +1,12 @@
+import platform
+import tkinter as tk
 from typing import Optional
 
 import customtkinter as ctk
 
 from interface import AppInterface
 from styles.buttons import BUTTON_DEFAULT_STYLES, BUTTON_FILLED_STYLES
+from utils.file import get_file
 from windows.Option.pages.HistoryPage import HistoryPage
 from windows.Option.pages.LogoPage import LogoPage
 from windows.Option.pages.RoundPage import RoundPage
@@ -18,6 +21,9 @@ class OptionWindow(ctk.CTkToplevel):
         self.title("ตั้งค่าการแข่งขัน — Fastmath")
         self.geometry("640x480")
         self.minsize(640, 480)
+        if platform.system() == "Windows":
+            self.iconbitmap(get_file("assets/icon.ico"))
+        self.iconphoto(True, tk.PhotoImage(file=get_file("assets/icon.png")))
 
         self._create_widgets()
 
