@@ -212,8 +212,8 @@ class App(ctk.CTk, AppInterface):
             self.after_cancel(self._spin_answer_timer_handle)
 
         digits = [
-            str(random.randint(0, 9))
-            for _ in range(self._rounds[self._current_round_index].options.answer_digit)
+            str(random.randint(0 if i else 1, 9))
+            for i in range(self._rounds[self._current_round_index].options.answer_digit)
         ]
 
         def after_spin():
