@@ -8,7 +8,7 @@
 
 ## ดาวน์โหลดและติดตั้งโปรแกรม
 
-ท่านสามารถ[ดาวน์โหลดโปรแกรมได้ที่นี่](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.0.0/Fastmath.zip)
+ท่านสามารถ[ดาวน์โหลดโปรแกรมได้ที่นี่](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.1.0/Fastmath.zip)
 
 เมื่อดาวน์โหลดเสร็จสิ้น ให้ท่านทำการแตกไฟล์ zip จะมีไฟล์ `โปรแกรมคิดเลขเร็ว (Fastmath).exe` ซึ่งสามารถเปิดใช้งานได้เลย โดยไม่ต้องทำการติดตั้งใดๆ
 
