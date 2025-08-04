@@ -238,3 +238,4 @@ Temporary Items
 *.icloud
 
 attic/
+settings.json

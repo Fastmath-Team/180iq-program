@@ -1,11 +1,12 @@
-import math
+import json
 import platform
 import random
 import tkinter as tk
 from bisect import bisect_right
 
 import customtkinter as ctk
-from PIL import Image
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from components.Countdown import Countdown
 from components.Digits import Digits
@@ -21,32 +22,91 @@ ctk.set_default_color_theme(get_file("styles/theme.json"))
 
 VERSION = "1.1.0"
 
+LOGO_SCALE_FACTOR = 1.25
+STATIC_LOGOS = (
+    get_file("assets/math.png"),
+    get_file("assets/sci.png"),
+    get_file("assets/nsru.png"),
+    get_file("assets/fastmath.png"),
+)
+
 
 class App(ctk.CTk, AppInterface):
     def __init__(self):
         super().__init__()
 
-        self.title("โปรแกรมคิดเลขเร็ว — Fastmath")
+        self.title("โปรแกรมคิดเลขเร็ว — MathStat NSRU X Fastmath")
         self.geometry("800x600")
         self.minsize(800, 600)
-        if platform.system() == "Windows":
-            self.iconbitmap(get_file("assets/icon.ico"))
-        self.iconphoto(True, tk.PhotoImage(file=get_file("assets/icon.png")))
 
-        self._event_name = "โปรแกรมคิดเลขเร็ว"
-        self._event_logo_files: tuple[str, ...] = tuple()
-        self._rounds: list[Round] = [
+        self.after(10, self.maximize_window)
+        self.is_fullscreen = False
+
+        if platform.system() == "Windows":
+            self.iconbitmap(get_file("assets/acad10.ico"))
+
+        self._icon_photo_image = tk.PhotoImage(file=get_file("assets/acad10.png"))
+        self.iconphoto(True, self._icon_photo_image)
+
+        pdfmetrics.registerFont(
+            TTFont(
+                "IBMPlexSansThai-Regular",
+                get_file("fonts/IBMPlexSansThai-Regular.ttf"),
+            )
+        )
+        pdfmetrics.registerFont(
+            TTFont("IBMPlexSansThai-Bold", get_file("fonts/IBMPlexSansThai-Bold.ttf"))
+        )
+        pdfmetrics.registerFontFamily(
+            "IBMPlexSansThai",
+            normal="IBMPlexSansThai-Regular",
+            bold="IBMPlexSansThai-Bold",
+            italic="IBMPlexSansThai-Regular",
+            boldItalic="IBMPlexSansThai-Bold",
+        )
+
+        # กำหนดค่าเริ่มต้น (default values)
+        self._event_name_default = "คณิตศาสตร์วิชาการ ครั้งที่ 10"
+        self._event_logo_files_default: tuple[str, ...] = tuple(
+            [get_file("assets/acad10logo.png")]
+        )
+        self._rounds_default: list[Round] = [
             Round(
                 items=[],
                 options=RoundOptions(
-                    question_count=10,
+                    question_count=8,
                     time_per_question=30,
                     question_digit=4,
                     answer_digit=2,
                     highlighted_question_digits=set(),
                 ),
             ),
+            Round(
+                items=[],
+                options=RoundOptions(
+                    question_count=9,
+                    time_per_question=40,
+                    question_digit=5,
+                    answer_digit=3,
+                    highlighted_question_digits=set(),
+                ),
+            ),
+            Round(
+                items=[],
+                options=RoundOptions(
+                    question_count=8,
+                    time_per_question=40,
+                    question_digit=5,
+                    answer_digit=3,
+                    highlighted_question_digits={0, 1},
+                ),
+            ),
         ]
+
+        # ใช้ค่าเริ่มต้นทันที
+        self._event_name = self._event_name_default
+        self._event_logo_files: tuple[str, ...] = self._event_logo_files_default
+        self._rounds: list[Round] = self._rounds_default
 
         self._current_index = 0
         self._current_round_index = 0
@@ -57,86 +117,207 @@ class App(ctk.CTk, AppInterface):
 
         self._create_widgets()
 
-        self.trigger_update_rounds("all")
+        # Defer initial data loading -> faster first paint
+        self.after(100, self._initial_load)
 
         self._current_breakpoint = 0
         self.bind("<Configure>", self.on_window_resize)
         self.on_window_resize(None)
+
+        self.bind("<F11>", self.toggle_fullscreen)
+
+    def _initial_load(self):
+        self._load_settings()
+        self.trigger_update_rounds("all")
+        self._calc_indexes()
+        self.update_logo(None)
+
+    def maximize_window(self):
+        if platform.system() == "Windows":
+            self.state("zoomed")
+        elif platform.system() == "Darwin":
+            # Skip window size animation on macOS
+            screen_width = self.winfo_screenwidth()
+            screen_height = self.winfo_screenheight()
+            self.geometry(f"{screen_width}x{screen_height}+0+0")
+        else:
+            self.state("zoomed")
+
+    def toggle_fullscreen(self, event=None):
+        self.is_fullscreen = not self.is_fullscreen
+        if self.is_fullscreen:
+            self.attributes("-fullscreen", True)
+            self.overrideredirect(True)
+        else:
+            self.overrideredirect(False)
+            self.attributes("-fullscreen", False)
+            self.maximize_window()
+
+    def save_settings(self):
+        settings = {
+            "event_name": self.festname,
+            "logo_filepaths": list(self.logo_filepaths),
+            "rounds": [
+                {
+                    "options": {
+                        "question_count": r.options.question_count,
+                        "time_per_question": r.options.time_per_question,
+                        "question_digit": r.options.question_digit,
+                        "answer_digit": r.options.answer_digit,
+                        "highlighted_question_digits": list(
+                            r.options.highlighted_question_digits
+                        ),
+                    }
+                }
+                for r in self._rounds
+            ],
+        }
+        with open("settings.json", "w", encoding="utf-8") as f:
+            json.dump(settings, f, indent=4, ensure_ascii=False)
+        print("Settings saved successfully!")
+
+    def _load_settings(self):
+        try:
+            with open("settings.json", "r", encoding="utf-8") as f:
+                settings = json.load(f)
+
+            temp_festname = settings.get("event_name", self._event_name_default)
+            temp_logo_filepaths = tuple(
+                settings.get("logo_filepaths", self._event_logo_files_default)
+            )
+
+            rounds_data = settings.get("rounds", [])
+            temp_rounds = (
+                [
+                    Round(
+                        items=[],
+                        options=RoundOptions(
+                            question_count=r["options"]["question_count"],
+                            time_per_question=r["options"]["time_per_question"],
+                            question_digit=r["options"]["question_digit"],
+                            answer_digit=r["options"]["answer_digit"],
+                            highlighted_question_digits=set(
+                                r["options"]["highlighted_question_digits"]
+                            ),
+                        ),
+                    )
+                    for r in rounds_data
+                ]
+                if rounds_data
+                else []
+            )
+
+            self.festname = temp_festname
+            self.logo_filepaths = temp_logo_filepaths
+            self._rounds = temp_rounds
+
+            print("Settings loaded successfully!")
+
+        except FileNotFoundError:
+            print("Settings file not found. Using default settings.")
+        except Exception as e:
+            print(f"Error loading settings: {e}. Using default settings.")
 
     def _create_widgets(self):
         from styles import font as FONT
 
         self.__FONT__ = FONT
 
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)
-        self.grid_rowconfigure(0, weight=1)
 
-        left_frame = ctk.CTkFrame(self, fg_color="transparent")
-        left_frame.grid(row=0, column=0, sticky="nsew")
-        right_frame = ctk.CTkFrame(self, fg_color="transparent", width=0)
-        right_frame.grid(row=0, column=1, sticky="nsew")
-
-        # --- LEFT SIDE ---
-        event_title_area = ctk.CTkFrame(left_frame, fg_color="transparent")
-        event_title_area.pack(fill="x", padx=(10, 0), pady=(10, 0))
-
+        self.event_title_area = ctk.CTkFrame(self, fg_color="transparent")
+        self.event_title_area.grid(
+            row=0, column=0, sticky="nsew", padx=(10, 0), pady=10
+        )
+        self.event_title_area.grid_columnconfigure(0, weight=1)
         self.image_references: list[ctk.CTkImage] = []
 
-        self._event_name_label = event_name_label = ctk.CTkLabel(
-            event_title_area,
-            text=self._event_name,
+        self._event_name_label = ctk.CTkLabel(
+            self.event_title_area,
+            text=self.festname,
             font=FONT.Font16Bold,
             anchor="w",
             text_color=THEME.CTkFrame.fg_color[0],
         )
-        event_name_label.pack(side="left", fill="both", expand=True)
+        self._event_name_label.grid(row=0, column=0, sticky="w")
 
         self._event_logo_frame = ctk.CTkFrame(
-            event_title_area, corner_radius=0, fg_color="transparent", height=24
+            self.event_title_area, corner_radius=0, fg_color="transparent", height=24
         )
-        self._event_logo_frame.pack(side="right", fill="both")
+        self._event_logo_frame.grid(row=0, column=1, sticky="e")
+
+        main_content_frame = ctk.CTkFrame(self, fg_color="transparent")
+        main_content_frame.grid(row=1, column=0, sticky="nsew")
+
+        main_content_frame.grid_columnconfigure(0, weight=20)
+        main_content_frame.grid_columnconfigure(1, weight=1)
+        main_content_frame.grid_rowconfigure(0, weight=1)
+
+        left_frame = ctk.CTkFrame(main_content_frame, fg_color="transparent")
+        left_frame.grid(row=0, column=0, sticky="nsew")
+        left_frame.grid_rowconfigure(0, weight=1)
+        left_frame.grid_rowconfigure(1, weight=1)
+        left_frame.grid_columnconfigure(0, weight=1)
 
         problem_frame = ctk.CTkFrame(left_frame)
-        problem_frame.pack(fill="both", padx=(10, 0), pady=(10, 5), expand=True)
+        problem_frame.grid(row=0, column=0, sticky="nsew", padx=(10, 0), pady=(0, 5))
+        problem_frame.grid_columnconfigure(0, weight=1)
+        problem_frame.grid_rowconfigure(0, weight=1)
 
-        self._problem_frame = problem_center_frame = Digits(problem_frame)
-        problem_center_frame.pack(expand=True)
+        self._problem_frame = Digits(problem_frame)
+        self._problem_frame.pack(expand=True)
 
         answer_frame = ctk.CTkFrame(left_frame)
-        answer_frame.pack(fill="both", padx=(10, 0), pady=(5, 10), expand=True)
+        answer_frame.grid(row=1, column=0, sticky="nsew", padx=(10, 0), pady=(5, 10))
+        answer_frame.grid_columnconfigure(0, weight=1)
+        answer_frame.grid_rowconfigure(0, weight=1)
 
-        self._answer_frame = answer_center_frame = Digits(answer_frame, mode="compact")
-        answer_center_frame.pack(expand=True)
+        self._answer_frame = Digits(answer_frame, mode="compact")
+        self._answer_frame.pack(expand=True)
 
-        # --- RIGHT SIDE ---
-        self._fastmath_logo = fastmath_logo = ctk.CTkImage(
-            light_image=Image.open(get_file("assets/logo.png")), size=(145, 24)
+        right_frame = ctk.CTkFrame(main_content_frame, fg_color="transparent")
+        right_frame.grid(row=0, column=1, sticky="nsew")
+
+        right_frame.grid_rowconfigure(1, weight=1)
+        right_frame.grid_columnconfigure(0, weight=1)
+
+        round_label_frame = ctk.CTkFrame(right_frame)
+        round_label_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=(0, 5))
+        round_label_frame.grid_columnconfigure(0, weight=1)
+
+        # Preserve space
+        self._round_question_label_bg = ctk.CTkLabel(
+            round_label_frame,
+            text="รอบที่ 0 ข้อที่ 00",
+            font=FONT.Font24,
+            text_color="white",
         )
-        ctk.CTkLabel(right_frame, text="", anchor="e", image=fastmath_logo).pack(
-            fill="x", pady=(10, 0), padx=10
+        self._round_question_label_bg.grid(
+            row=0, column=0, sticky="nsew", padx=10, pady=(0, 5)
         )
 
-        round_frame = ctk.CTkFrame(right_frame)
-        round_frame.pack(fill="x", padx=10, pady=10)
-
-        self._round_question_label = round_question_label = ctk.CTkLabel(
-            round_frame, text="รอบที่ 1 ข้อที่ 1", font=FONT.Font24, padx=10, pady=10
+        self._round_question_label = ctk.CTkLabel(
+            round_label_frame, text="รอบที่ 1 ข้อที่ 1", font=FONT.Font24
         )
-        round_question_label.pack(fill="x", padx=10)
+        self._round_question_label.grid(
+            row=0, column=0, sticky="nsew", padx=10, pady=(0, 5)
+        )
 
-        self._cnt = cnt = Countdown(
+        self._cnt = Countdown(
             right_frame,
             30,
             on_begin=self._on_countdown_begin,
             on_end=self._on_countdown_end,
         )
-        cnt.pack(fill="both", padx=10, expand=True)
+        self._cnt.grid(row=1, column=0, sticky="nsew", padx=10, pady=(5, 5))
 
         action_frame = ctk.CTkFrame(right_frame)
-        action_frame.pack(fill="x", padx=10, pady=10)
+        action_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=(5, 10))
+        action_frame.columnconfigure(1, weight=1)
 
-        self._get_question_btn = get_question_btn = ctk.CTkButton(
+        self._get_question_btn = ctk.CTkButton(
             action_frame,
             text="สุ่มโจทย์",
             command=self._on_spin_problem,
@@ -144,9 +325,9 @@ class App(ctk.CTk, AppInterface):
             height=56,
             font=FONT.Font24,
         )
-        get_question_btn.pack(fill="x", padx=10, pady=(10, 0))
+        self._get_question_btn.pack(fill="x", padx=10, pady=(10, 0))
 
-        self._get_answer_btn = get_answer_btn = ctk.CTkButton(
+        self._get_answer_btn = ctk.CTkButton(
             action_frame,
             text="สุ่มคำตอบ",
             command=self._on_spin_answer,
@@ -154,39 +335,38 @@ class App(ctk.CTk, AppInterface):
             height=56,
             font=FONT.Font24,
         )
-        get_answer_btn.pack(fill="x", padx=10, pady=10)
+        self._get_answer_btn.pack(fill="x", padx=10, pady=10)
 
         action_ext_frame = ctk.CTkFrame(action_frame, fg_color="transparent")
         action_ext_frame.pack(fill="x", padx=10, pady=(0, 10))
-
         action_ext_frame.columnconfigure(1, weight=1)
 
-        self._prev_btn = prev_btn = ctk.CTkButton(
+        self._prev_btn = ctk.CTkButton(
             action_ext_frame,
-            text="⬅︎",
+            text=" ⬅ ",
             command=self._on_prev_round,
             width=0,
             font=FONT.Font13,
         )
-        prev_btn.grid(row=0, column=0, sticky="w")
+        self._prev_btn.grid(row=0, column=0, sticky="w")
 
-        self._next_btn = next_btn = ctk.CTkButton(
+        self._next_btn = ctk.CTkButton(
             action_ext_frame,
             text="ข้อถัดไป",
             command=self._on_next_round,
             width=0,
             font=FONT.Font13,
         )
-        next_btn.grid(row=0, column=1, sticky="ew", padx=10)
+        self._next_btn.grid(row=0, column=1, sticky="ew", padx=10)
 
-        self._config_btn = config_btn = ctk.CTkButton(
+        self._config_btn = ctk.CTkButton(
             action_ext_frame,
             text="⚙️",
             command=self._on_open_option_window,
             width=0,
             font=FONT.Font13,
         )
-        config_btn.grid(row=0, column=2, sticky="e")
+        self._config_btn.grid(row=0, column=2, sticky="e")
 
     def _on_spin_problem(self):
         if self._spin_problem_timer_handle:
@@ -304,23 +484,37 @@ class App(ctk.CTk, AppInterface):
         window = OptionWindow(self)
         window.grab_set()
 
+    def reset_settings(self):
+        self.festname = self._event_name_default
+        self.logo_filepaths = self._event_logo_files_default
+        self._rounds = self._rounds_default
+        self.save_settings()
+
+        self.trigger_update_rounds("all")
+        self._calc_indexes()
+        self.update_logo(None)
+
     def get_logo_height(self) -> int:
-        return get_responsive_value_from_width(self.winfo_width(), (24, 38, 48, 62))
+        return get_responsive_value_from_width(self.winfo_width(), (14, 23, 29, 37))
 
     def update_logo(self, size):
-        _size = size or self.get_logo_height()
-        self._event_logo_frame.configure(height=_size)
+        if size is None:
+            size = self.get_logo_height()
+
+        scaled_size = int(size * LOGO_SCALE_FACTOR)
+
+        self._event_logo_frame.configure(height=scaled_size)
+        all_logos = (*self.logo_filepaths, *STATIC_LOGOS)
+
         update_logo_in_frame(
-            self._event_logo_files,
+            all_logos,
             self._event_logo_frame,
             self.image_references,
-            padx=(10, 0),
-            size=_size,
+            size=scaled_size,
         )
 
     def on_window_resize(self, event):
         current_width = self.winfo_width()
-
         width_index = get_responsive_value_from_width(current_width, (0, 1, 2, 3))
 
         # Skip unnecessary updates
@@ -332,7 +526,6 @@ class App(ctk.CTk, AppInterface):
         self.__FONT__.update_font_size(current_width)
 
         logo_size = self.get_logo_height()
-        self._fastmath_logo.configure(size=(math.ceil(291 / 48 * logo_size), logo_size))
         self.update_logo(logo_size)
 
     @property

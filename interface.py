@@ -30,6 +30,12 @@ class AppInterface:
     def update_logo(self, size: int | None):
         raise NotImplementedError()
 
+    def save_settings(self):
+        raise NotImplementedError()
+
+    def reset_settings(self):
+        raise NotImplementedError()
+
     @property
     def version(self) -> str:
         raise NotImplementedError()

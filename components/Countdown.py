@@ -5,35 +5,36 @@ import customtkinter as ctk
 import pygame.mixer
 
 from styles import colors as COLORS
-from styles.progress import (
-    PROGRESS_EMPTY_STYLES,
-    PROGRESS_ORANGE_STYLES,
-    PROGRESS_RED_STYLES,
-    PROGRESS_YELLOW_STYLES,
-)
 from utils.file import get_file
 
 TimerCallback = Callable[[], None]
 
 
-def get_time_label_color(ratio: float):
-    if ratio > 2 / 3:
-        return COLORS.Yellow
-    elif ratio > 1 / 3:
-        return COLORS.Orange
-    else:
-        return COLORS.Red
+def interpolate_color(color1_rgb: tuple, color2_rgb: tuple, factor: float) -> str:
+    r = int(color1_rgb[0] + factor * (color2_rgb[0] - color1_rgb[0]))
+    g = int(color1_rgb[1] + factor * (color2_rgb[1] - color1_rgb[1]))
+    b = int(color1_rgb[2] + factor * (color2_rgb[2] - color1_rgb[2]))
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 
-def get_progress_bar_color(ratio: float):
-    if ratio > 2 / 3:
-        return PROGRESS_YELLOW_STYLES
-    elif ratio > 1 / 3:
-        return PROGRESS_ORANGE_STYLES
-    elif ratio == 0:
-        return PROGRESS_EMPTY_STYLES
+def hex_to_rgb(hex_color: str) -> tuple:
+    hex_color = hex_color.lstrip("#")
+    return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
+
+
+GREEN_RGB = hex_to_rgb(COLORS.Green)
+YELLOW_RGB = hex_to_rgb(COLORS.Yellow)
+RED_RGB = hex_to_rgb(COLORS.Red)
+
+
+def get_color_from_ratio(ratio: float):
+    ratio = max(0.0, min(1.0, ratio))
+    if ratio > 0.5:
+        factor = (1.0 - ratio) * 2
+        return interpolate_color(GREEN_RGB, YELLOW_RGB, factor)
     else:
-        return PROGRESS_RED_STYLES
+        factor = (0.5 - ratio) * 2
+        return interpolate_color(YELLOW_RGB, RED_RGB, factor)
 
 
 class Countdown(ctk.CTkFrame):
@@ -64,24 +65,35 @@ class Countdown(ctk.CTkFrame):
     def _create_widgets(self):
         from styles import font as FONT
 
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0, weight=5)
+        self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=0)
+
+        # เพิ่มตัวเลข "00" แบบคงที่เข้ามาในหน้าต่าง
+        # ตัวเลขนี้จะถูกซ้อนอยู่ด้านหลังตัวเลขจับเวลา
+        self.static_background_label = ctk.CTkLabel(
+            self,
+            font=FONT.Font80Bold,
+            text="00",
+            anchor="center",
+            text_color="#FFFFFF",  # กำหนดเป็นสีขาว
+        )
+        self.static_background_label.grid(
+            row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew"
+        )
 
         self.time_label = time_label = ctk.CTkLabel(
             self,
             font=FONT.Font80Bold,
             text=str(self.remaining_seconds),
             anchor="center",
-            text_color=get_time_label_color(self.remaining_seconds / self.max_seconds),
+            text_color=get_color_from_ratio(self.remaining_seconds / self.max_seconds),
         )
         time_label.grid(row=0, column=0, padx=(10, 0), pady=(10, 0), sticky="nsew")
 
         self.time_progress_bar = time_progress_bar = ctk.CTkProgressBar(
-            self,
-            orientation="vertical",
-            width=20,
-            determinate_speed=0.1,
-            **get_progress_bar_color(self.remaining_seconds / self.max_seconds),
+            self, orientation="vertical", corner_radius=0, determinate_speed=0.1
         )
         time_progress_bar.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="nsew")
 
@@ -99,16 +111,23 @@ class Countdown(ctk.CTkFrame):
         time_ratio = self.remaining_seconds / self.max_seconds
         self.time_label.configure(
             text=math.ceil(self.remaining_seconds),
-            text_color=get_time_label_color(time_ratio),
+            text_color=get_color_from_ratio(time_ratio),
         )
-        self.time_progress_bar.configure(**get_progress_bar_color(time_ratio))
-        self.time_progress_bar.set(time_ratio)
+        if self.remaining_seconds > 0:
+            if not self.time_progress_bar.winfo_ismapped():
+                self.time_progress_bar.grid(
+                    row=0, column=1, padx=10, pady=(10, 0), sticky="nsew"
+                )
+            self.time_progress_bar.configure(
+                progress_color=get_color_from_ratio(time_ratio), fg_color="#ffffff"
+            )
+            self.time_progress_bar.set(time_ratio)
+        else:
+            self.time_progress_bar.set(0)
 
     def set_time(self, time: int):
         self._cancel_job()
-
         self.max_seconds = time
-
         self._reset_timer()
 
     def _toggle_timer(self):
@@ -119,21 +138,16 @@ class Countdown(ctk.CTkFrame):
 
     def _start_timer(self):
         self.button.configure(text="รีเซ็ต")
-
         self._update_widgets()
         self._schedule_job()
-
         if self._on_begin:
             self._on_begin()
 
     def _reset_timer(self):
         self._cancel_job()
-
         self.button.configure(text="จับเวลา")
-
         self.remaining_seconds = self.max_seconds
         self._update_widgets()
-
         if self._on_end:
             self._on_end()
 

@@ -18,12 +18,17 @@ class OptionWindow(ctk.CTkToplevel):
 
         self.app = parent
 
-        self.title("ตั้งค่าการแข่งขัน — Fastmath")
+        self.title("ตั้งค่าการแข่งขัน — MathStat NSRU X Fastmath")
         self.geometry("640x480")
         self.minsize(640, 480)
+
         if platform.system() == "Windows":
-            self.iconbitmap(get_file("assets/icon.ico"))
-        self.iconphoto(True, tk.PhotoImage(file=get_file("assets/icon.png")))
+            self.iconbitmap(get_file("assets/acad10.ico"))
+
+        self._icon_photo_image = tk.PhotoImage(file=get_file("assets/acad10.png"))
+        self.iconphoto(True, self._icon_photo_image)
+
+        self._page_instances: dict[str, ctk.CTkFrame] = {}
 
         self._create_widgets()
 
@@ -35,12 +40,8 @@ class OptionWindow(ctk.CTkToplevel):
 
         left_frame = ctk.CTkFrame(self)
         left_frame.grid(row=0, column=0, pady=10, padx=10, sticky="nsew")
-        right_frame = ctk.CTkFrame(self, fg_color="transparent")
-        right_frame.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="nsew")
-
-        round_page = RoundPage(right_frame, app=self.app)
-        logo_page = LogoPage(right_frame, app=self.app)
-        history_page = HistoryPage(right_frame, app=self.app)
+        self.right_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.right_frame.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="nsew")
 
         ctk.CTkLabel(left_frame, text="ตั้งค่า", font=FONT.StaticFont16Bold).pack(
             fill="x", pady=10
@@ -48,7 +49,7 @@ class OptionWindow(ctk.CTkToplevel):
 
         round_page_btn = ctk.CTkButton(
             left_frame,
-            text="รอบและโจทย์",
+            text="รอบการแข่งขัน",
             command=lambda: self._show_page("round"),
             **BUTTON_FILLED_STYLES,
         )
@@ -64,33 +65,55 @@ class OptionWindow(ctk.CTkToplevel):
         )
         history_page_btn.pack(fill="x", padx=10)
 
-        ctk.CTkLabel(left_frame, text=f"เวอร์ชัน {self.app.version}").pack(
-            expand=True, anchor="s", padx=10
-        )
+        ctk.CTkFrame(left_frame, fg_color="transparent").pack(expand=True, fill="both")
 
-        ctk.CTkButton(left_frame, text="ปิด", command=self.destroy).pack(
-            fill="x", anchor="s", padx=10, pady=(5, 10)
+        save_btn = ctk.CTkButton(
+            left_frame, text="บันทึก", command=self._on_save_and_close
+        )
+        save_btn.pack(fill="x", padx=10, pady=(0, 5))
+
+        reset_btn = ctk.CTkButton(
+            left_frame, text="เคลียร์การตั้งค่า", command=self._on_reset_settings
+        )
+        reset_btn.pack(fill="x", padx=10, pady=(0, 5))
+
+        ctk.CTkLabel(left_frame, text=f"เวอร์ชัน {self.app.version}").pack(
+            fill="x", anchor="s", padx=10
         )
 
         self._current_page: Optional[str] = None
-        self._pages: dict[str, tuple[ctk.CTkButton, ctk.CTkFrame]] = {
-            "round": (round_page_btn, round_page),
-            "logo": (logo_page_btn, logo_page),
-            "history": (history_page_btn, history_page),
+        self._pages: dict[str, tuple[ctk.CTkButton, type[ctk.CTkFrame]]] = {
+            "round": (round_page_btn, RoundPage),
+            "logo": (logo_page_btn, LogoPage),
+            "history": (history_page_btn, HistoryPage),
         }
 
+        self._page_instances["round"] = RoundPage(self.right_frame, app=self.app)
         self._show_page("round")
 
     def _show_page(self, page: str):
         if self._current_page:
-            frame_btn, frame = self._pages[self._current_page]
+            frame_btn, _ = self._pages[self._current_page]
+            frame_instance = self._page_instances[self._current_page]
 
-            frame.pack_forget()
+            frame_instance.pack_forget()
             frame_btn.configure(**BUTTON_DEFAULT_STYLES)
 
-        frame_btn, frame = self._pages[page]
+        frame_btn, page_class = self._pages[page]
 
-        frame.pack(fill="both", expand=True)
+        if page not in self._page_instances:
+            self._page_instances[page] = page_class(self.right_frame, app=self.app)
+
+        frame_instance = self._page_instances[page]
+        frame_instance.pack(fill="both", expand=True)
         frame_btn.configure(**BUTTON_FILLED_STYLES)
 
         self._current_page = page
+
+    def _on_save_and_close(self):
+        self.app.save_settings()
+        self.destroy()
+
+    def _on_reset_settings(self):
+        self.app.reset_settings()
+        self.destroy()

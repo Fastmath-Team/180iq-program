@@ -38,7 +38,7 @@ class Digit(ctk.CTkFrame):
 
     def set_highlight(self, highlight: bool):
         self._label.configure(
-            text_color=COLORS.Green if highlight else THEME.CTkLabel.text_color[0]
+            text_color=COLORS.Orange if highlight else THEME.CTkLabel.text_color[0]
         )
 
 
