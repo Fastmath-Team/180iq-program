@@ -20,7 +20,7 @@ from windows.Option import OptionWindow
 ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme(get_file("styles/theme.json"))
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 LOGO_SCALE_FACTOR = 1.25
 STATIC_LOGOS = (
