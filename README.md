@@ -1,6 +1,6 @@
-# โปรแกรมคิดเลขเร็วเพื่อการแข่งขัน (Fastmath)
+# โปรแกรมคิดเลขเร็ว — MathStat NSRU X Fastmath
 
-โปรแกรมคิดเลขเร็วเพื่อการแข่งขัน (Fastmath) พัฒนาร่วมกับสาขาวิชาคณิตศาสตร์และสถิติ คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏนครสวรรค์
+"โปรแกรมคิดเลขเร็ว — MathStat NSRU X Fastmath" พัฒนาร่วมกับสาขาวิชาคณิตศาสตร์และสถิติ คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏนครสวรรค์
 
 <div align="center">
   <img src="screenshot.webp" alt="" width="400" height="314" />
@@ -8,9 +8,11 @@
 
 ## ดาวน์โหลดและติดตั้งโปรแกรม
 
-ท่านสามารถ[ดาวน์โหลดโปรแกรมได้ที่นี่](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.1.0/Fastmath.zip)
+ท่านสามารถ[ดาวน์โหลดโปรแกรมได้ที่นี่](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.2.0/Fastmath.zip)
 
-เมื่อดาวน์โหลดเสร็จสิ้น ให้ท่านทำการแตกไฟล์ zip จะมีไฟล์ `โปรแกรมคิดเลขเร็ว (Fastmath).exe` ซึ่งสามารถเปิดใช้งานได้เลย โดยไม่ต้องทำการติดตั้งใดๆ
+[<img src="download-button.webp" alt="ดาวน์โหลดโปรแกรม" width="200" height="67.33668341708542">](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.2.0/Fastmath.zip)
+
+เมื่อดาวน์โหลดเสร็จสิ้น ให้ท่านทำการแตกไฟล์ zip จะมีไฟล์ `โปรแกรมคิดเลขเร็ว — MathStat NSRU X Fastmath.exe` ซึ่งสามารถเปิดใช้งานได้เลย โดยไม่ต้องทำการติดตั้งใดๆ
 
 > [!IMPORTANT]
 > เพื่อการแสดงผลที่ดี กรุณาติดตั้งฟอนต์ที่อยู่ในโฟลเดอร์ `fonts` โดยทำการลากไฟล์ `IBMPlexSansThai-Regular.ttf` และ `IBMPlexSansThai-Bold.ttf` ไปยังโฟลเดอร์ `C:/Windows/Fonts`
@@ -46,3 +48,7 @@ pip install -r requirements.txt
 ```bash
 python3 main.py
 ```
+
+## Attribution
+
+- `ding.wav` by tim.kahn -- https://freesound.org/s/91926/ -- License: Attribution 4.0
