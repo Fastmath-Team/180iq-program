@@ -36,6 +36,9 @@ class AppInterface:
     def reset_settings(self):
         raise NotImplementedError()
 
+    def export_to_pdf(self, source: Literal["exit", "option"] = "option") -> bool:
+        raise NotImplementedError()
+
     @property
     def version(self) -> str:
         raise NotImplementedError()

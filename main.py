@@ -3,6 +3,8 @@ import platform
 import random
 import tkinter as tk
 from bisect import bisect_right
+from tkinter import filedialog, messagebox
+from typing import Literal
 
 import customtkinter as ctk
 from reportlab.pdfbase import pdfmetrics
@@ -12,6 +14,7 @@ from components.Countdown import Countdown
 from components.Digits import Digits
 from interface import AppInterface, QuestionAnswer, Round, RoundOptions
 from styles.theme import THEME
+from utils.builder import PdfBuilder, build_field
 from utils.file import get_file
 from utils.logo import update_logo_in_frame
 from utils.responsive import get_responsive_value_from_width
@@ -85,7 +88,7 @@ class App(ctk.CTk, AppInterface):
                 items=[],
                 options=RoundOptions(
                     question_count=9,
-                    time_per_question=40,
+                    time_per_question=30,
                     question_digit=5,
                     answer_digit=3,
                     highlighted_question_digits=set(),
@@ -125,6 +128,8 @@ class App(ctk.CTk, AppInterface):
         self.on_window_resize(None)
 
         self.bind("<F11>", self.toggle_fullscreen)
+
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def _initial_load(self):
         self._load_settings()
@@ -528,6 +533,18 @@ class App(ctk.CTk, AppInterface):
         logo_size = self.get_logo_height()
         self.update_logo(logo_size)
 
+    def on_closing(self):
+        if self._rounds[0].items:
+            result = messagebox.askyesnocancel(
+                "ปิดโปรแกรม", "ท่านมีประวัติการเล่นอยู่ ต้องการบันทึกโจทย์หรือไม่?"
+            )
+
+            if result is None:
+                return
+            if result and not self.export_to_pdf("exit"):
+                return
+        self.destroy()
+
     @property
     def version(self):
         return VERSION
@@ -592,6 +609,33 @@ class App(ctk.CTk, AppInterface):
     def current_last(self, value: bool):
         self._current_last = value
         self._next_btn.configure(state="disabled" if value else "normal")
+
+    def export_to_pdf(self, source: Literal["exit", "option"] = "option"):
+        if not self._rounds[0].items:
+            messagebox.showinfo("ไม่มีข้อมูล", "ไม่พบประวัติโจทย์ที่สามารถ Export ได้")
+            return False
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
+            title="บันทึกประวัติเป็น PDF",
+        )
+
+        if not file_path:
+            return False
+
+        try:
+            pdf_builder = PdfBuilder()
+            build_field(self._rounds, pdf_builder)
+            pdf_builder.generate(file_path)
+
+            if source == "option":
+                messagebox.showinfo("Export สำเร็จ", f"บันทึกไฟล์ PDF ได้ที่: {file_path}")
+            return True
+
+        except Exception as e:
+            messagebox.showerror("Export ล้มเหลว", f"ไม่สามารถบันทึกไฟล์ PDF ได้: {e}")
+            return False
 
 
 if __name__ == "__main__":

@@ -1,21 +1,10 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import messagebox
 
 import customtkinter as ctk
-from reportlab.lib.enums import TA_CENTER
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.lib.units import inch
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
-from reportlab.platypus.flowables import Flowable
 
-from interface import AppInterface, Round
-
-
-# คลาส Builder และ TkBuilder
-class Builder:
-    def add_text(self, msg: str, *a):
-        raise NotImplementedError()
+from interface import AppInterface
+from utils.builder import Builder, build_field
 
 
 class TkBuilder(Builder):
@@ -24,45 +13,6 @@ class TkBuilder(Builder):
 
     def add_text(self, msg: str, *a):
         self._textbox.insert("end", msg, *a)
-
-
-class PdfBuilder(Builder):
-    def __init__(self):
-        base_styles = getSampleStyleSheet()
-        self._styles = {
-            "h3": ParagraphStyle(
-                "RoundStyle",
-                parent=base_styles["h2"],
-                fontSize=12,
-                leading=14,
-                fontName="IBMPlexSansThai-Bold",
-            ),
-            None: ParagraphStyle(
-                "ContentStyle",
-                parent=base_styles["Normal"],
-                fontName="IBMPlexSansThai-Regular",
-            ),
-        }
-        self._story: list[Flowable] = [
-            Paragraph(
-                "ประวัติโจทย์และคำตอบ",
-                ParagraphStyle(
-                    "TitleStyle",
-                    parent=base_styles["h1"],
-                    fontSize=18,
-                    alignment=TA_CENTER,
-                    fontName="IBMPlexSansThai-Bold",
-                ),
-            ),
-            Spacer(1, 0.2 * inch),
-        ]
-
-    def add_text(self, msg: str, style=None, *a):
-        return self._story.append(Paragraph(msg, self._styles[style]))
-
-    def generate(self, file_path: str):
-        doc = SimpleDocTemplate(file_path, pagesize=A4)
-        doc.build(self._story)
 
 
 # คลาส TextBuilder สำหรับการสร้างข้อความ
@@ -75,32 +25,6 @@ class TextBuilder(Builder):
 
     def get_text(self) -> str:
         return "\n".join(self._s)
-
-
-def build_field(rounds: list[Round], box: Builder):
-    for x, round in enumerate(rounds):
-        total_time_in_round = sum(hist.time_per_question for hist in round.items)
-        box.add_text(f"รอบที่ {x + 1} [ระยะเวลา {total_time_in_round} วินาที]\n", "h3")
-
-        if len(round.items) == 0:
-            box.add_text("ยังไม่ได้เริ่ม\n")
-            continue
-
-        for hist in round.items:
-            q = " ".join(hist.question)
-            a = "".join(hist.answer)
-            d = (
-                (
-                    "[เน้นตัว "
-                    + ", ".join(
-                        map(lambda x: str(x + 1), hist.highlighted_question_digits)
-                    )
-                    + "]"
-                )
-                if hist.highlighted_question_digits
-                else ""
-            )
-            box.add_text(f"{hist.index + 1}: {q} → {a} {d}\n")
 
 
 class HistoryPage(ctk.CTkFrame):
@@ -145,28 +69,7 @@ class HistoryPage(ctk.CTkFrame):
         history_textbox.configure(state="disabled")
 
     def export_to_pdf(self):
-        if not self.history_text:
-            messagebox.showinfo("ไม่มีข้อมูล", "ไม่พบประวัติโจทย์ที่สามารถ Export ได้")
-            return
-
-        file_path = filedialog.asksaveasfilename(
-            defaultextension=".pdf",
-            filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
-            title="บันทึกประวัติเป็น PDF",
-        )
-
-        if not file_path:
-            return
-
-        try:
-            pdf_builder = PdfBuilder()
-            build_field(self.app.rounds, pdf_builder)
-            pdf_builder.generate(file_path)
-
-            messagebox.showinfo("Export สำเร็จ", f"บันทึกไฟล์ PDF ได้ที่: {file_path}")
-
-        except Exception as e:
-            messagebox.showerror("Export ล้มเหลว", f"ไม่สามารถบันทึกไฟล์ PDF ได้: {e}")
+        self.app.export_to_pdf("option")
 
 
 # https://stackoverflow.com/a/63105641/2736814
