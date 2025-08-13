@@ -8,9 +8,9 @@
 
 ## ดาวน์โหลดและติดตั้งโปรแกรม
 
-ท่านสามารถ[ดาวน์โหลดโปรแกรมได้ที่นี่](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.2.0/MathStat.NSRU.X.Fastmath.zip)
+ท่านสามารถ[ดาวน์โหลดโปรแกรมได้ที่นี่](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.3.0/MathStat.NSRU.X.Fastmath.zip)
 
-[<img src="download-button.webp" alt="ดาวน์โหลดโปรแกรม" width="200" height="67.33668341708542">](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.2.0/MathStat.NSRU.X.Fastmath.zip)
+[<img src="download-button.webp" alt="ดาวน์โหลดโปรแกรม" width="180" height="60.60301507537689">](https://github.com/Fastmath-Team/180iq-program/releases/download/v1.3.0/MathStat.NSRU.X.Fastmath.zip)
 
 เมื่อดาวน์โหลดเสร็จสิ้น ให้ท่านทำการแตกไฟล์ zip จะมีไฟล์ `โปรแกรมคิดเลขเร็ว — MathStat NSRU X Fastmath.exe` ซึ่งสามารถเปิดใช้งานได้เลย โดยไม่ต้องทำการติดตั้งใดๆ
 
